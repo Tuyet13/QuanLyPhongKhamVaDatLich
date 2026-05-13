@@ -1,0 +1,69 @@
+﻿@model List<QuanLyPhongKhamVaDatLich.Models.Patient>
+
+<div class="d-flex justify-content-between mb-3">
+
+    <h3>Danh sách bệnh nhân</h3>
+
+    <a asp-action="Create"
+       class="btn btn-primary">
+
+        + Thêm bệnh nhân
+    </a>
+
+</div>
+
+<table class="table table-bordered table-striped">
+
+    <thead class="table-primary">
+
+        <tr>
+            <th>ID</th>
+            <th>Họ tên</th>
+            <th>Giới tính</th>
+            <th>SĐT</th>
+            <th>Địa chỉ</th>
+            <th>Chức năng</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>@item.PatientId</td>
+
+                <td>@item.FullName</td>
+
+                <td>@item.Gender</td>
+
+                <td>@item.Phone</td>
+
+                <td>@item.Address</td>
+
+                <td>
+
+                    <a asp-action="Edit"
+                       asp-route-id="@item.PatientId"
+                       class="btn btn-warning btn-sm">
+
+                        Sửa
+                    </a>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@item.PatientId"
+                       class="btn btn-danger btn-sm">
+
+                        Xóa
+                    </a>
+
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+
+</table>

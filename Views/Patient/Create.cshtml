@@ -1,0 +1,45 @@
+﻿@model QuanLyPhongKhamVaDatLich.Models.Patient
+
+<div class="card shadow p-4">
+
+    <h3 class="mb-4">
+        Thêm bệnh nhân
+    </h3>
+
+    <form method="post">
+
+        <div class="mb-3">
+            <label>Họ tên</label>
+
+            <input asp-for="FullName"
+                   class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Giới tính</label>
+
+            <input asp-for="Gender"
+                   class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Số điện thoại</label>
+
+            <input asp-for="Phone"
+                   class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Địa chỉ</label>
+
+            <input asp-for="Address"
+                   class="form-control" />
+        </div>
+
+        <button class="btn btn-success">
+            Lưu dữ liệu
+        </button>
+
+    </form>
+
+</div>

@@ -1,0 +1,148 @@
+﻿@model QuanLyPhongKhamVaDatLich.Models.User
+@{
+    Layout = "_Layout";
+}
+
+<style>
+    /* Đồng bộ với trang Login */
+    body {
+        background-color: #f4f7f6;
+    }
+
+    .card {
+        border-radius: 20px;
+        border: none;
+    }
+
+    .form-label {
+        color: #495057;
+        font-size: 0.9rem;
+    }
+
+    /* Hiệu ứng ô nhập liệu */
+    .form-control {
+        border-radius: 8px;
+        padding: 12px;
+        border: 1px solid #dee2e6;
+        transition: all 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: #008ca3;
+            box-shadow: 0 0 0 0.25rem rgba(0, 140, 163, 0.1);
+        }
+
+    /* Nút con mắt mật khẩu */
+    .btn-outline-secondary {
+        border-color: #dee2e6;
+        color: #6c757d;
+    }
+
+        .btn-outline-secondary:hover {
+            background-color: #f8f9fa;
+            color: #008ca3;
+            border-color: #dee2e6;
+        }
+
+    /* Link chuyển sang Login */
+    .login-link {
+        color: #008ca3;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .login-link:hover {
+            text-decoration: underline;
+        }
+
+    /* Nút xác nhận */
+    .btn-submit {
+        background: #008ca3;
+        border: none;
+        border-radius: 10px;
+        transition: 0.3s;
+    }
+
+        .btn-submit:hover {
+            background: #007a8e;
+            transform: translateY(-1px);
+        }
+</style>
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm p-4">
+                <h3 class="text-center fw-bold mb-4" style="color: #008ca3;">ĐĂNG KÝ THÀNH VIÊN</h3>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger py-2 small">@ViewBag.Error</div>
+                }
+
+                <form asp-action="Register" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><i class="bi bi-person me-1"></i> Họ và Tên</label>
+                        <input type="text" name="FullName" class="form-control" placeholder="Nguyễn Văn A" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><i class="bi bi-envelope me-1"></i> Gmail cá nhân</label>
+                        <input type="email" name="Email" class="form-control" placeholder="example@gmail.com" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><i class="bi bi-telephone me-1"></i> Số điện thoại</label>
+                        <input type="text" name="Phone" class="form-control" placeholder="090xxxxxxx" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold"><i class="bi bi-person-badge me-1"></i> Tên đăng nhập</label>
+                        <input type="text" name="Username" class="form-control" placeholder="user123" required />
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold"><i class="bi bi-shield-lock me-1"></i> Mật khẩu</label>
+                        <div class="input-group">
+                            <input type="password" name="Password" id="passReg" class="form-control" placeholder="********" required />
+                            <button class="btn btn-outline-secondary" type="button" onclick="togglePass('passReg', 'iconReg')">
+                                <i class="bi bi-eye-slash" id="iconReg"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-submit w-100 py-3 text-white fw-bold mb-3">
+                        XÁC NHẬN ĐĂNG KÝ
+                    </button>
+
+                    <!-- Dòng hướng dẫn quay lại Login -->
+                    <div class="text-center">
+                        <p class="small text-muted mb-0">
+                            Bạn đã có tài khoản?
+                            <a asp-action="Login" class="login-link">Đăng nhập ngay</a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function togglePass(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.className = "bi bi-eye";
+            } else {
+                input.type = "password";
+                icon.className = "bi bi-eye-slash";
+            }
+        }
+    </script>
+}

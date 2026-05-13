@@ -1,0 +1,68 @@
+﻿@model List<QuanLyPhongKhamVaDatLich.Models.Appointment>
+
+<h3 class="mb-4">
+    Danh sách lịch hẹn
+</h3>
+
+<table class="table table-bordered">
+
+    <thead class="table-primary">
+
+        <tr>
+            <th>Bệnh nhân</th>
+            <th>Bác sĩ</th>
+            <th>Ngày khám</th>
+            <th>Trạng thái</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>
+                    @item.Patient?.FullName
+                </td>
+
+                <td>
+                    @item.Doctor?.FullName
+                </td>
+
+                <td>
+                    @item.AppointmentDate
+                </td>
+
+                <td>
+
+                    @if (item.Status == "Pending")
+                    {
+                        <span class="badge bg-warning">
+                            Chờ khám
+                        </span>
+                    }
+
+                    @if (item.Status == "Completed")
+                    {
+                        <span class="badge bg-success">
+                            Hoàn thành
+                        </span>
+                    }
+
+                    @if (item.Status == "Cancelled")
+                    {
+                        <span class="badge bg-danger">
+                            Đã hủy
+                        </span>
+                    }
+
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+
+</table>

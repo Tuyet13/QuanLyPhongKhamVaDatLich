@@ -1,0 +1,27 @@
+﻿@model IEnumerable<QuanLyPhongKhamVaDatLich.Models.Doctor>
+
+<h2>Quản lý danh sách Bác sĩ</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Họ tên</th>
+            <th>Chuyên khoa</th>
+            <th>Số điện thoại</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.FullName</td>
+                <td>@item.Specialty?.SpecialtyName</td>
+                <td>@item.Phone</td>
+                <td>
+                    <a asp-action="EditDoctor" asp-route-id="@item.DoctorId">Sửa</a> |
+                    <a asp-action="DeleteDoctor" asp-route-id="@item.DoctorId">Xóa</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

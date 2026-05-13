@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin AM2T</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-admin: #4a00e0; /* Màu tím chủ đạo */
+            --bg-light: #f4f7fe;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .sidebar {
+            min-width: 260px;
+            max-width: 260px;
+            background: #fff;
+            min-height: 100vh;
+            box-shadow: 4px 0 10px rgba(0,0,0,0.03);
+            position: fixed;
+        }
+
+        .main-wrapper {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        .nav-link {
+            color: #6c757d;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin: 5px 15px;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+            .nav-link:hover {
+                background: #f8f9fa;
+                color: var(--primary-admin);
+            }
+
+            .nav-link.active {
+                background: var(--primary-admin);
+                color: #fff !important;
+                box-shadow: 0 4px 12px rgba(74, 0, 224, 0.2);
+            }
+
+            .nav-link i {
+                width: 25px;
+            }
+
+        .top-navbar {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #eee;
+            padding: 15px 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <nav class="sidebar py-4">
+            <div class="text-center mb-5">
+                <div class="d-inline-block p-2 rounded-3 bg-primary bg-opacity-10 mb-2">
+                    <i class="fa fa-shield-heart fa-2x text-primary"></i>
+                </div>
+                <h5 class="fw-bold" style="color: var(--primary-admin);">AM2T CLINIC</h5>
+                <span class="badge bg-soft-primary text-primary px-3">Hệ thống Quản trị</span>
+            </div>
+
+            <div class="nav flex-column">
+                <a class="nav-link @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")"
+                   asp-controller="Admin" asp-action="Index">
+                    <i class="fa fa-th-large me-2"></i> Dashboard
+                </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["Action"].ToString() == "UserList" ? "active" : "")"
+                   asp-controller="Admin" asp-action="UserList">
+                    <i class="fa fa-user-injured me-2"></i> Quản lý Bệnh nhân
+                </a>
+                <a class="nav-link" asp-controller="Doctor" asp-action="Index">
+                    <i class="fa fa-user-md me-2"></i> Quản lý Bác sĩ
+                </a>
+                <a class="nav-link" asp-controller="Appointment" asp-action="Index">
+                    <i class="fa fa-calendar-alt me-2"></i> Lịch hẹn khám
+                </a>
+
+                <div class="mt-4 px-4 small text-muted text-uppercase fw-bold" style="font-size: 10px;">Cài đặt hệ thống</div>
+                <hr class="mx-3 my-2">
+
+                <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">
+                    <i class="fa fa-sign-out-alt me-2"></i> Đăng xuất
+                </a>
+            </div>
+        </nav>
+
+        <div class="main-wrapper">
+            <header class="top-navbar d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold">@ViewData["Title"]</h5>
+                <div class="user-profile d-flex align-items-center">
+                    <span class="me-3 small fw-medium">Chào, Admin AM2T</span>
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=4a00e0&color=fff" class="rounded-circle" width="35" />
+                </div>
+            </header>
+
+            <main class="p-4">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
