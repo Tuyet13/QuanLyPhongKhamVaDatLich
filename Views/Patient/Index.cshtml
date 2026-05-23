@@ -1,69 +1,101 @@
-﻿@model List<QuanLyPhongKhamVaDatLich.Models.Patient>
+﻿@model QuanLyPhongKhamVaDatLich.Models.Patient
 
-<div class="d-flex justify-content-between mb-3">
+@{
+    ViewData["Title"] = "Trang cá nhân bệnh nhân";
+}
 
-    <h3>Danh sách bệnh nhân</h3>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow border-0 text-center p-3">
+                <div class="card-body">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                         alt="Avatar" class="rounded-circle img-fluid mb-3" style="width: 120px;">
 
-    <a asp-action="Create"
-       class="btn btn-primary">
+                    <h4 class="card-title fw-bold text-primary">@Model.FullName</h4>
+                    <p class="text-muted mb-3">Mã số bệnh nhân: #@Model.PatientId</p>
 
-        + Thêm bệnh nhân
-    </a>
+                    <hr>
 
+                    <div class="text-start info-list">
+                        <p class="mb-2"><strong><i class="bi bi-gender-ambiguous text-secondary me-2"></i>Giới tính:</strong> @(Model.Gender ?? "Chưa cập nhật")</p>
+                        <p class="mb-2"><strong><i class="bi bi-telephone text-secondary me-2"></i>Số điện thoại:</strong> @Model.Phone</p>
+                        <p class="mb-2"><strong><i class="bi bi-envelope text-secondary me-2"></i>Email:</strong> @Model.Email</p>
+                        <p class="mb-0"><strong><i class="bi bi-geo-alt text-secondary me-2"></i>Địa chỉ:</strong> @(Model.Address ?? "Chưa cập nhật")</p>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <a asp-action="Edit" asp-route-id="@Model.PatientId" class="btn btn-outline-primary btn-sm rounded-pill">
+                            <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa hồ sơ
+                        </a>
+                        <a href="/Account/Logout" class="btn btn-light btn-sm rounded-pill text-danger">
+                            <i class="bi bi-box-arrow-right me-1"></i> Đăng xuất tài khoản
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="p-4 mb-4 bg-primary text-white rounded-3 shadow-sm">
+                <h2 class="fw-bold">Xin chào, @Model.FullName!</h2>
+                <p class="lead mb-0">Hệ thống luôn sẵn sàng hỗ trợ bạn đặt lịch hẹn và kết nối nhanh chóng với trung tâm y tế.</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-sm-6">
+                    <div class="card h-100 shadow-sm border-0 border-start border-success border-4">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <h5 class="card-title fw-bold text-success"><i class="bi bi-calendar-plus-fill me-2"></i>Đặt lịch khám</h5>
+                                <p class="card-text text-muted small">Đặt hẹn trực tuyến, lựa chọn dịch vụ và thời gian khám thuận tiện chỉ trong 1 phút.</p>
+                            </div>
+                            <a href="/Booking/Create" class="btn btn-success btn-sm w-100 mt-3 rounded-3">Đặt lịch ngay</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="card h-100 shadow-sm border-0 border-start border-warning border-4">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <h5 class="card-title fw-bold text-warning"><i class="bi bi-alarm-fill me-2"></i>Lịch khám sắp tới</h5>
+                                <p class="card-text text-muted small">Quản lý và kiểm tra trạng thái tiến độ các lịch hẹn khám bạn đã đăng ký.</p>
+                            </div>
+                            <a href="/Booking/MyAppointments" class="btn btn-warning text-white btn-sm w-100 mt-3 rounded-3">Xem lịch hẹn</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="card h-100 shadow-sm border-0 border-start border-info border-4">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <h5 class="card-title fw-bold text-info"><i class="bi bi-file-earmark-medical-fill me-2"></i>Lịch sử bệnh án</h5>
+                                <p class="card-text text-muted small">Tra cứu kết quả chẩn đoán bệnh từ bác sĩ, xem đơn thuốc cũ và dặn dò tái khám.</p>
+                            </div>
+                            <a href="/MedicalRecord/History" class="btn btn-info text-white btn-sm w-100 mt-3 rounded-3">Xem lịch sử</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="card h-100 shadow-sm border-0 border-start border-danger border-4">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <h5 class="card-title fw-bold text-danger"><i class="bi bi-telephone-outbound-fill me-2"></i>Hotline trợ giúp</h5>
+                                <p class="card-text text-muted small">Bạn gặp khó khăn trong việc thao tác ứng dụng hoặc cần hỗ trợ tư vấn gấp?</p>
+                            </div>
+                            <a href="tel:19001234" class="btn btn-danger btn-sm w-100 mt-3 rounded-3">Gọi ngay: 1900 1234</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 
-<table class="table table-bordered table-striped">
-
-    <thead class="table-primary">
-
-        <tr>
-            <th>ID</th>
-            <th>Họ tên</th>
-            <th>Giới tính</th>
-            <th>SĐT</th>
-            <th>Địa chỉ</th>
-            <th>Chức năng</th>
-        </tr>
-
-    </thead>
-
-    <tbody>
-
-        @foreach (var item in Model)
-        {
-            <tr>
-
-                <td>@item.PatientId</td>
-
-                <td>@item.FullName</td>
-
-                <td>@item.Gender</td>
-
-                <td>@item.Phone</td>
-
-                <td>@item.Address</td>
-
-                <td>
-
-                    <a asp-action="Edit"
-                       asp-route-id="@item.PatientId"
-                       class="btn btn-warning btn-sm">
-
-                        Sửa
-                    </a>
-
-                    <a asp-action="Delete"
-                       asp-route-id="@item.PatientId"
-                       class="btn btn-danger btn-sm">
-
-                        Xóa
-                    </a>
-
-                </td>
-
-            </tr>
-        }
-
-    </tbody>
-
-</table>
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+}

@@ -1,53 +1,121 @@
 ﻿@model IEnumerable<QuanLyPhongKhamVaDatLich.Models.Doctor>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Hệ thống quản lý bác sĩ";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml"; // Đồng bộ chung với Sidebar của ông
 }
 
-<h1>Index</h1>
+<div class="container-fluid px-4 py-3">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 8px;">
+            <i class="fa fa-check-circle me-2 text-success"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 8px;">
+            <i class="fa fa-exclamation-circle me-2 text-danger"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FullName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Phone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Specialty)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FullName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Phone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Specialty.SpecialtyId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.DoctorId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.DoctorId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.DoctorId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="card border-0 shadow-sm p-4 mb-4" style="border-radius: 16px; bg-white">
+        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+            <div>
+                <h5 class="fw-bold text-dark mb-1">
+                    <i class="fa fa-user-md text-primary me-2"></i>Danh mục đội ngũ Bác sĩ
+                </h5>
+                <p class="text-muted small mb-0">Quản lý danh sách, cấp tài khoản và phân bổ nghiệp vụ chuyên khoa phòng khám.</p>
+            </div>
+            <div>
+                <a asp-controller="Doctors" asp-action="Create" class="btn btn-primary px-4 py-2 rounded-pill fw-medium shadow-sm">
+                    <i class="fa fa-plus-circle me-2"></i>Thêm bác sĩ mới
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm p-4" style="border-radius: 16px; bg-white">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle border-0 mb-0">
+                <thead class="table-light text-muted small text-uppercase border-bottom">
+                    <tr>
+                        <th class="py-3" width="10%">Mã số</th>
+                        <th class="py-3" width="35%">Họ và tên bác sĩ</th>
+                        <th class="py-3" width="25%">Chuyên khoa nghiệp vụ</th>
+                        <th class="py-3" width="15%">Số điện thoại</th>
+                        <th class="py-3 text-center" width="15%">Tác vụ hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-secondary fw-bold">#@item.DoctorId</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                                            <i class="fa fa-user-md fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <span class="fw-bold text-dark d-block">@item.FullName</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-primary px-3 py-2 rounded-pill fw-semibold border border-primary border-opacity-10">
+                                        @(item.Specialty != null ? item.Specialty.SpecialtyName : "Chưa cấu hình")
+                                    </span>
+                                </td>
+                                <td class="text-secondary">
+                                    <i class="fa fa-phone-alt small text-muted me-1"></i> @(string.IsNullOrEmpty(item.Phone) ? "---" : item.Phone)
+                                </td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a asp-controller="Doctors" asp-action="Details" asp-route-id="@item.DoctorId" class="btn btn-sm btn-light border action-btn" title="Xem chi tiết">
+                                            <i class="fa fa-eye text-info"></i>
+                                        </a>
+                                        <a asp-controller="Doctors" asp-action="Edit" asp-route-id="@item.DoctorId" class="btn btn-sm btn-light border action-btn" title="Chỉnh sửa">
+                                            <i class="fa fa-edit text-warning"></i>
+                                        </a>
+                                        <form asp-controller="Doctors" asp-action="Delete" method="post" class="d-inline" onsubmit="return confirm('Hành động này sẽ gỡ hoàn toàn hồ sơ bác sĩ và tài khoản đăng nhập đi kèm. Xác nhận xóa?');">
+                                            <input type="hidden" name="id" value="@item.DoctorId" />
+                                            <button type="submit" class="btn btn-sm btn-light border action-btn" title="Xóa hồ sơ">
+                                                <i class="fa fa-trash text-danger"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted py-5">
+                                <i class="fa fa-folder-open fa-2x mb-3 text-black-50 d-block"></i>
+                                Cơ sở dữ liệu phòng khám chưa ghi nhận nhân sự y khoa nào.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .action-btn:hover {
+        background-color: #f8f9fa !important;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .table th {
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+</style>

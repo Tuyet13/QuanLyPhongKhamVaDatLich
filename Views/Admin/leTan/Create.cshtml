@@ -1,0 +1,55 @@
+﻿@model QuanLyPhongKhamVaDatLich.Models.Receptionist
+@{
+    ViewData["Title"] = "Thêm mới lễ tân";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container px-4 py-3" style="max-width: 800px;">
+    <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+        <h5 class="fw-bold mb-4 text-dark"><i class="fa fa-user-plus text-primary me-2"></i>Thêm nhân viên lễ tân mới</h5>
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger border-0 mb-3" style="border-radius: 8px;">@TempData["Error"]</div>
+        }
+
+        <form asp-controller="Admin" asp-action="CreateReceptionist" method="post">
+            @Html.AntiForgeryToken()
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-muted">Họ và tên</label>
+                    <input asp-for="FullName" class="form-control" placeholder="Nguyễn Văn A" required style="border-radius: 8px;" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-muted">Số điện thoại</label>
+                    <input asp-for="Phone" class="form-control" placeholder="09xxxxxxx" required style="border-radius: 8px;" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-muted">Lương cơ bản (Ngày công)</label>
+                    <input asp-for="BaseSalary" type="number" class="form-control" value="300000" required style="border-radius: 8px;" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-muted">Ngày vào làm</label>
+                    <input asp-for="HireDate" type="date" class="form-control" value="@DateTime.Today.ToString("yyyy-MM-dd")" required style="border-radius: 8px;" />
+                </div>
+
+                <hr class="text-muted my-4">
+                <h6 class="fw-bold text-secondary mb-2"><i class="fa fa-key me-2"></i>Cấp tài khoản đăng nhập hệ thống</h6>
+
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-muted">Email đăng nhập</label>
+                    <input type="email" name="Email" class="form-control" placeholder="letan@phongkham.com" required style="border-radius: 8px;" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label small fw-semibold text-muted">Mật khẩu ban đầu</label>
+                    <input type="password" name="Password" class="form-control" placeholder="******" required style="border-radius: 8px;" />
+                </div>
+
+                <div class="col-12 d-flex gap-2 justify-content-end mt-4">
+                    <a asp-action="Receptionists" class="btn btn-light px-4 border" style="border-radius: 8px;">Hủy bỏ</a>
+                    <button type="submit" class="btn btn-primary px-4" style="background: #4a00e0; border: none; border-radius: 8px;">Khởi tạo</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

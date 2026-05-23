@@ -26,6 +26,27 @@
             position: fixed;
         }
 
+        /* CSS định dạng riêng cho Logo AM2T */
+        .logo-admin-container {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 12px auto;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+        }
+
+        .logo-admin-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
         .main-wrapper {
             margin-left: 260px;
             width: calc(100% - 260px);
@@ -66,31 +87,42 @@
 <body>
     <div class="d-flex">
         <nav class="sidebar py-4">
-            <div class="text-center mb-5">
-                <div class="d-inline-block p-2 rounded-3 bg-primary bg-opacity-10 mb-2">
-                    <i class="fa fa-shield-heart fa-2x text-primary"></i>
+            <div class="text-center mb-4">
+                <div class="logo-admin-container">
+                    <img src="/imge/am2t.jpg" class="logo-admin-img" alt="AM2T Clinic Logo"
+                         onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name=AM2T&background=4a00e0&color=fff';" />
                 </div>
-                <h5 class="fw-bold" style="color: var(--primary-admin);">AM2T CLINIC</h5>
-                <span class="badge bg-soft-primary text-primary px-3">Hệ thống Quản trị</span>
+                <h5 class="fw-bold" style="color: var(--primary-admin); letter-spacing: 0.5px;">AM2T CLINIC</h5>
+                <span class="badge bg-soft-primary text-primary px-3 py-1.5" style="background-color: rgba(74,0,224,0.1); font-size: 11px;">Hệ thống Quản trị</span>
             </div>
 
             <div class="nav flex-column">
-                <a class="nav-link @(ViewContext.RouteData.Values["Action"].ToString() == "Index" ? "active" : "")"
+                <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" && ViewContext.RouteData.Values["Controller"]?.ToString() == "Admin" ? "active" : "")"
                    asp-controller="Admin" asp-action="Index">
                     <i class="fa fa-th-large me-2"></i> Dashboard
                 </a>
-                <a class="nav-link @(ViewContext.RouteData.Values["Action"].ToString() == "UserList" ? "active" : "")"
-                   asp-controller="Admin" asp-action="UserList">
+
+                <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Patients" || ViewContext.RouteData.Values["Action"]?.ToString() == "DetailsPatient" || ViewContext.RouteData.Values["Action"]?.ToString() == "EditPatient" ? "active" : "")"
+                   asp-controller="Admin" asp-action="Patients">
                     <i class="fa fa-user-injured me-2"></i> Quản lý Bệnh nhân
                 </a>
-                <a class="nav-link" asp-controller="Doctor" asp-action="Index">
+
+                <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Doctors" || ViewContext.RouteData.Values["Action"]?.ToString() == "CreateDoctor" || ViewContext.RouteData.Values["Action"]?.ToString() == "EditDoctor" || ViewContext.RouteData.Values["Action"]?.ToString() == "DetailsDoctor" ? "active" : "")"
+                   asp-controller="Admin" asp-action="Doctors">
                     <i class="fa fa-user-md me-2"></i> Quản lý Bác sĩ
                 </a>
-                <a class="nav-link" asp-controller="Appointment" asp-action="Index">
+
+                <a class="nav-link @(ViewContext.RouteData.Values["Action"]?.ToString() == "Receptionists" ? "active" : "")"
+                   asp-controller="Admin" asp-action="Receptionists">
+                    <i class="fa fa-user-tie me-2"></i> Quản lý Lễ tân
+                </a>
+
+                <a class="nav-link @(ViewContext.RouteData.Values["Index"]?.ToString() == "Index" && ViewContext.RouteData.Values["Controller"]?.ToString() == "Appointment" ? "active" : "")"
+                   asp-controller="Appointment" asp-action="Index">
                     <i class="fa fa-calendar-alt me-2"></i> Lịch hẹn khám
                 </a>
 
-                <div class="mt-4 px-4 small text-muted text-uppercase fw-bold" style="font-size: 10px;">Cài đặt hệ thống</div>
+                <div class="mt-4 px-4 small text-muted text-uppercase fw-bold" style="font-size: 10px; letter-spacing: 0.5px;">Cài đặt hệ thống</div>
                 <hr class="mx-3 my-2">
 
                 <a class="nav-link text-danger" asp-controller="Account" asp-action="Logout">
