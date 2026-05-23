@@ -1,26 +1,55 @@
 ﻿@model IEnumerable<QuanLyPhongKhamVaDatLich.Models.Appointment>
 
-<h2>Danh sách bệnh nhân đặt lịch</h2>
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th>Ngày khám</th>
-            <th>Bệnh nhân</th>
-            <th>Trạng thái</th>
-            <th>Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+    @{
+    ViewData["Title"] = "Lịch khám";
+    }
+
+    <h2 class="mb-4">Danh sách bệnh nhân đặt lịch</h2>
+
+    <table class="table table-hover table-bordered align-middle">
+        <thead class="table-primary">
+            <tr>
+                <th>Ngày khám</th>
+                <th>Bệnh nhân</th>
+                <th>Trạng thái</th>
+                <th width="180">Thao tác</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
         {
             <tr>
-                <td>@item.AppointmentDate.ToString("dd/MM/yyyy HH:mm")</td>
-                <td>@item.Patient?.FullName</td>
-                <td>@item.Status</td>
                 <td>
-                    <a href="/Doctor/CreateRecord/@item.AppointmentId" class="btn btn-sm btn-primary">Khám bệnh</a>
+                    @item.AppointmentDate.ToString("dd/MM/yyyy HH:mm")
+                </td>
+
+                <td>
+                    @(item.Patient?.FullName ?? "Chưa cập nhật")
+                </td>
+
+                <td>
+                    <span class="badge bg-success">
+                        @item.Status
+                    </span>
+                </td>
+
+                <td>
+                    <a asp-controller="Doctor"
+                       asp-action="Examine"
+                       asp-route-id="@item.AppointmentId"
+                       class="btn btn-primary btn-sm">
+                        Khám bệnh
+                    </a>
+
+                    <a asp-controller="Doctor"
+                       asp-action="PatientHistory"
+                       asp-route-id="@item.PatientId"
+                       class="btn btn-info btn-sm text-white">
+                        Lịch sử
+                    </a>
                 </td>
             </tr>
         }
-    </tbody>
-</table>
+        </tbody>
+    </table>

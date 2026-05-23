@@ -1,0 +1,144 @@
+﻿@model List<QuanLyPhongKhamVaDatLich.Models.MedicalRecord>
+
+@{
+    ViewData["Title"] = "Hồ sơ bệnh án";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+
+    var patient = ViewBag.Patient as QuanLyPhongKhamVaDatLich.Models.Patient;
+}
+
+<style>
+    .history-page {
+        padding: 10px;
+    }
+
+    .history-header h1 {
+        font-size: 42px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 5px;
+    }
+
+    .history-header p {
+        font-size: 18px;
+        color: #6b7280;
+        margin-bottom: 30px;
+    }
+
+    .history-card {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+        margin-bottom: 30px;
+    }
+
+    .record-box {
+        background: #f9fafb;
+        border-radius: 20px;
+        padding: 24px;
+        margin-bottom: 25px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .record-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #2563eb;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+    .form-control {
+        border-radius: 16px !important;
+        border: 1px solid #dbe3ee !important;
+        padding: 16px !important;
+        font-size: 16px !important;
+        background: white !important;
+        min-height: 55px;
+    }
+
+    .empty-box {
+        text-align: center;
+        padding: 60px;
+        color: #9ca3af;
+        font-size: 18px;
+    }
+</style>
+
+<div class="history-page">
+
+    <div class="history-header">
+        <h1>Hồ sơ bệnh án</h1>
+
+        <p>
+            Bệnh nhân:
+            <strong>@(patient?.FullName ?? "Không có dữ liệu")</strong>
+        </p>
+    </div>
+
+    <div class="history-card">
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="empty-box">
+                Chưa có hồ sơ bệnh án
+            </div>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                <div class="record-box">
+
+                    <div class="record-title">
+                        Ngày khám:
+                        @item.RecordDate.ToString("dd/MM/yyyy HH:mm")
+                    </div>
+
+                    <div class="form-group">
+                        <label>Triệu chứng</label>
+                        <div class="form-control">
+                            @(item.Symptom ?? "Không có")
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Chẩn đoán</label>
+                        <div class="form-control">
+                            @(item.Diagnosis ?? "Không có")
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Kê đơn thuốc</label>
+                        <div class="form-control">
+                            @(item.PrescriptionSummary ?? "Không có")
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ghi chú bác sĩ</label>
+                        <div class="form-control">
+                            @(item.Note ?? "Không có")
+                        </div>
+                    </div>
+
+                </div>
+            }
+        }
+
+    </div>
+
+</div>

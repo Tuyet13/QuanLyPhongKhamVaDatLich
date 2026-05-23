@@ -1,0 +1,48 @@
+﻿@model IEnumerable<QuanLyPhongKhamVaDatLich.Models.MedicalRecord>
+
+<div class="card shadow border-0">
+
+    <div class="card-header bg-success text-white">
+        <h4>
+            <i class="fa fa-file-medical"></i>
+            Hồ sơ bệnh án
+        </h4>
+
+        <div>
+            Bệnh nhân:
+            <strong>@(ViewBag.Patient?.FullName ?? "Không xác định")</strong>
+        </div>
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-striped table-hover">
+
+            <thead>
+                <tr>
+                    <th>Mã BA</th>
+                    <th>Bệnh nhân</th>
+                    <th>Ngày khám</th>
+                    <th>Chẩn đoán</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>#@item.RecordId</td>
+                        <td>@item.Appointment?.Patient?.FullName</td>
+                        <td>@item.RecordDate.ToString("dd/MM/yyyy")</td>
+                        <td>@item.Diagnosis</td>
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

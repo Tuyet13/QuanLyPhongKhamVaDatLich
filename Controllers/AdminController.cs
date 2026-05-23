@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKhamVaDatLich.Data;
-using Microsoft.AspNetCore.Http;
+using QuanLyPhongKhamVaDatLich.Models;
 using System;
 using System.Linq;
-using System.Globalization;
+using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace QuanLyPhongKhamVaDatLich.Controllers
 {
@@ -18,94 +19,152 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
             _context = context;
         }
 
-        /// <summary>
-        /// Hàm hỗ trợ kiểm tra quyền Admin từ Session.
-        /// Được đồng bộ với logic "Admin" => RedirectToAction("Index", "Admin") trong AccountController.
-        /// </summary>
         private bool IsAdmin()
         {
-            var role = HttpContext.Session.GetString("UserRole");
-            return !string.IsNullOrEmpty(role) && role.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+            return HttpContext.Session.GetString("UserRole") == "Admin";
         }
 
-        // ================= TRANG CHỦ ADMIN (DASHBOARD) =================
-        public IActionResult Index()
+        // 1. DASHBOARD
+        public async Task<IActionResult> Index()
         {
-            // Bảo mật: Nếu không phải Admin thì đá về trang Login
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
-            // 1. Thống kê số lượng dựa trên Role trong bảng User
-            ViewBag.TotalPatients = _context.User.Count(u => u.Role == "Patient");
-            ViewBag.TotalDoctors = _context.User.Count(u => u.Role == "Doctor");
+            ViewBag.TotalPatients = await _context.Patient.CountAsync();
+            ViewBag.TotalDoctors = await _context.Doctor.CountAsync();
+            ViewBag.TotalReceptionists = await _context.Receptionist.CountAsync();
 
-            // 2. Thống kê lịch hẹn trong ngày hôm nay
             var today = DateTime.Today;
-            ViewBag.TotalAppointments = _context.Appointment.Count(a => a.AppointmentDate.Date == today);
+            ViewBag.TotalAppointments = await _context.Appointment.CountAsync(a => a.AppointmentDate.Date == today);
 
-            // 3. Tính doanh thu tháng hiện tại
-            var currentMonth = DateTime.Now.Month;
-            var currentYear = DateTime.Now.Year;
+            // Giả định doanh thu dựa trên số lượng lịch hẹn (có thể thay đổi logic tùy nhu cầu)
+            int totalAppointmentsCount = await _context.Appointment.CountAsync();
+            decimal totalRevenue = totalAppointmentsCount * 150000;
+            ViewBag.TotalRevenue = totalRevenue.ToString("N0") + " đ";
 
-            // Dùng decimal? để tránh lỗi Sum khi danh sách rỗng (Null)
-            var revenue = _context.Appointment
-                .Where(a => a.AppointmentDate.Month == currentMonth && a.AppointmentDate.Year == currentYear)
-                .Sum(a => (decimal?)a.Price) ?? 0;
-
-            ViewBag.TotalRevenue = revenue.ToString("N0", new CultureInfo("vi-VN")) + " VNĐ";
-
-            // 4. Lấy 5 hoạt động (Lịch hẹn) gần đây nhất để hiển thị bảng
-            var recentActivities = _context.Appointment
-                .Include(a => a.Patient)
+            var todayAppointments = await _context.Appointment
                 .Include(a => a.Doctor)
-                .OrderByDescending(a => a.AppointmentDate)
+                .Where(a => a.AppointmentDate.Date == today)
+                .OrderByDescending(a => a.AppointmentId)
                 .Take(5)
-                .ToList();
+                .ToListAsync();
 
-            return View(recentActivities);
+            return View("~/Views/Admin/Index.cshtml", todayAppointments);
         }
 
-        // ================= QUẢN LÝ DANH SÁCH BÁC SĨ =================
-        public IActionResult Doctors()
+        // 2. NHÂN SỰ CHUYÊN SÂU
+        public async Task<IActionResult> StaffPerformance()
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
 
-            // Lấy danh sách bác sĩ kèm theo thông tin Chuyên khoa (Specialty)
-            var doctors = _context.Doctor
-                .Include(d => d.Specialty)
-                .ToList();
+            var today = DateTime.Today;
+            var doctorList = await _context.Doctor.ToListAsync();
+            var receptionistList = await _context.Receptionist.ToListAsync();
+            var performanceData = new List<StaffPerformanceViewModel>();
 
-            return View(doctors);
-        }
-
-        // ================= QUẢN LÝ TÀI KHOẢN NGƯỜI DÙNG =================
-        public IActionResult UserList()
-        {
-            if (!IsAdmin()) return RedirectToAction("Login", "Account");
-
-            // Hiển thị danh sách User mới nhất lên đầu
-            var users = _context.User
-                .OrderByDescending(u => u.UserId)
-                .ToList();
-
-            return View(users);
-        }
-
-        // ================= CÁC HÀM XỬ LÝ KHÁC (VÍ DỤ: XÓA/KHÓA USER) =================
-
-        [HttpPost]
-        public IActionResult ToggleUserStatus(int id)
-        {
-            if (!IsAdmin()) return Unauthorized();
-
-            var user = _context.User.Find(id);
-            if (user != null)
+            // Xử lý Bác sĩ
+            foreach (var doc in doctorList)
             {
-                // Đảo ngược trạng thái hoạt động (Active/Inactive)
-                user.IsActive = !user.IsActive;
-                _context.SaveChanges();
+                int totalLeave = await _context.LeaveRequest.CountAsync(l => l.UserId == doc.UserId && l.LeaveDate.Month == today.Month && l.Status == "Approved");
+                int workingDays = Math.Max(0, 26 - totalLeave);
+
+                performanceData.Add(new StaffPerformanceViewModel
+                {
+                    Id = doc.DoctorId,
+                    FullName = doc.FullName,
+                    Role = "Bác sĩ",
+                    StatusToday = await _context.LeaveRequest.AnyAsync(l => l.UserId == doc.UserId && l.LeaveDate.Date == today && l.Status == "Approved") ? "Nghỉ phép ⛔" : "Đang làm việc ✅",
+                    EstimatedSalary = workingDays * doc.BaseSalary,
+                    TotalWorkCount = await _context.Appointment.CountAsync(a => a.DoctorId == doc.DoctorId),
+                    Rating = doc.Rating
+                });
             }
 
-            return RedirectToAction("UserList");
+            // Xử lý Lễ tân
+            foreach (var recep in receptionistList)
+            {
+                int totalLeave = await _context.LeaveRequest.CountAsync(l => l.UserId == recep.UserId && l.LeaveDate.Month == today.Month && l.Status == "Approved");
+                int workingDays = Math.Max(0, 26 - totalLeave);
+
+                performanceData.Add(new StaffPerformanceViewModel
+                {
+                    Id = recep.ReceptionistId,
+                    FullName = recep.FullName,
+                    Role = "Lễ tân",
+                    StatusToday = await _context.LeaveRequest.AnyAsync(l => l.UserId == recep.UserId && l.LeaveDate.Date == today && l.Status == "Approved") ? "Nghỉ phép ⛔" : "Đang làm việc ✅",
+                    EstimatedSalary = workingDays * recep.BaseSalary,
+                    TotalWorkCount = await _context.Appointment.CountAsync(), // Nếu cần đếm cụ thể, hãy bổ sung khóa ngoại
+                    Rating = 5.0
+                });
+            }
+
+            return View("~/Views/Admin/StaffPerformance.cshtml", performanceData);
         }
+
+        // 3. QUẢN LÝ BÁC SĨ
+        public async Task<IActionResult> Doctors() => View("~/Views/Admin/doctor/Index.cshtml", await _context.Doctor.Include(d => d.Specialty).ToListAsync());
+
+        public async Task<IActionResult> CreateDoctor()
+        {
+            ViewBag.Specialties = await _context.Specialty.ToListAsync();
+            return View("~/Views/Admin/doctor/Create.cshtml");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateDoctor(Doctor doctor, string Email, string Password)
+        {
+            if (await _context.User.AnyAsync(u => u.Email == Email))
+            {
+                TempData["Error"] = "Email đã tồn tại!";
+                ViewBag.Specialties = await _context.Specialty.ToListAsync();
+                return View("~/Views/Admin/doctor/Create.cshtml", doctor);
+            }
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var user = new User { Username = Email, Email = Email, Password = Password, Role = "Doctor", IsActive = true };
+                _context.User.Add(user);
+                await _context.SaveChangesAsync();
+
+                doctor.UserId = user.UserId;
+                _context.Doctor.Add(doctor);
+                await _context.SaveChangesAsync();
+
+                await transaction.CommitAsync();
+                return RedirectToAction("Doctors");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+
+                TempData["Error"] = ex.Message;
+
+                ViewBag.Specialties = await _context.Specialty.ToListAsync();
+
+                return View("~/Views/Admin/doctor/Create.cshtml", doctor);
+            }
+        }
+
+        // 4. QUẢN LÝ LỄ TÂN
+        public async Task<IActionResult> Receptionists() => View("~/Views/Admin/leTan/Index.cshtml", await _context.Receptionist.Include(r => r.User).ToListAsync());
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteReceptionist(int id)
+        {
+            var recep = await _context.Receptionist.FindAsync(id);
+            if (recep != null)
+            {
+                var user = await _context.User.FindAsync(recep.UserId);
+                _context.Receptionist.Remove(recep);
+                if (user != null) _context.User.Remove(user);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("Receptionists");
+        }
+
+        // 5. QUẢN LÝ BỆNH NHÂN
+        public async Task<IActionResult> Patients() => View("~/Views/Admin/benhNhan/Index.cshtml", await _context.Patient.ToListAsync());
     }
 }

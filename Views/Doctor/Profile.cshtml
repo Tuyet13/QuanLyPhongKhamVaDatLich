@@ -1,0 +1,58 @@
+﻿@model QuanLyPhongKhamVaDatLich.Models.Doctor
+
+@{
+    ViewData["Title"] = "Hồ sơ cá nhân";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<div class="card shadow border-0">
+
+    <div class="card-header bg-dark text-white">
+
+        <h4>
+            <i class="fa fa-user-doctor"></i>
+            Hồ sơ cá nhân
+        </h4>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row">
+
+            <div class="col-md-3 text-center">
+
+                <img src="https://cdn-icons-png.flaticon.com/512/3774/3774299.png"
+                     width="150"
+                     class="img-fluid rounded-circle border">
+
+            </div>
+
+            <div class="col-md-9">
+
+                <table class="table">
+
+                    <tr>
+                        <th width="200">Họ tên</th>
+                        <td>@Model.FullName</td>
+                    </tr>
+
+                    <tr>
+                        <th>Email</th>
+                        <td>@Model.User?.Email</td>
+                    </tr>
+
+                    <tr>
+                        <th>Chuyên khoa</th>
+                        <td>@Model.Specialty?.SpecialtyName</td>
+                    </tr>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

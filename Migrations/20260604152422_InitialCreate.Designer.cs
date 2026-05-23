@@ -12,15 +12,15 @@ using QuanLyPhongKhamVaDatLich.Data;
 namespace QuanLyPhongKhamVaDatLich.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260513062835_AddMedicalRecord")]
-    partial class AddMedicalRecord
+    [Migration("20260604152422_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.7")
+                .HasAnnotation("ProductVersion", "8.0.23")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -90,12 +90,24 @@ namespace QuanLyPhongKhamVaDatLich.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DoctorId"));
 
+                    b.Property<decimal>("BaseSalary")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("BaseSalary");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("HireDate")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("HireDate");
+
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Rating")
+                        .HasColumnType("float")
+                        .HasColumnName("Rating");
 
                     b.Property<int>("SpecialtyId")
                         .HasColumnType("int");
@@ -107,36 +119,71 @@ namespace QuanLyPhongKhamVaDatLich.Migrations
 
                     b.HasIndex("SpecialtyId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Doctor");
+                });
+
+            modelBuilder.Entity("QuanLyPhongKhamVaDatLich.Models.LeaveRequest", b =>
+                {
+                    b.Property<int>("LeaveRequestId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LeaveRequestId"));
+
+                    b.Property<DateTime>("LeaveDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LeaveRequestId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("LeaveRequest");
                 });
 
             modelBuilder.Entity("QuanLyPhongKhamVaDatLich.Models.MedicalRecord", b =>
                 {
-                    b.Property<int>("MedicalRecordId")
+                    b.Property<int>("RecordId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MedicalRecordId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RecordId"));
 
                     b.Property<int>("AppointmentId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Diagnosis")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Medications")
-                        .IsRequired()
+                    b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Treatment")
-                        .IsRequired()
+                    b.Property<string>("PrescriptionSummary")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("MedicalRecordId");
+                    b.Property<DateTime>("RecordDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Symptom")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RecordId");
+
+                    b.HasIndex("AppointmentId");
 
                     b.ToTable("MedicalRecord");
                 });
@@ -207,6 +254,36 @@ namespace QuanLyPhongKhamVaDatLich.Migrations
                     b.ToTable("Patient");
                 });
 
+            modelBuilder.Entity("QuanLyPhongKhamVaDatLich.Models.Prescription", b =>
+                {
+                    b.Property<int>("PrescriptionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PrescriptionId"));
+
+                    b.Property<string>("Dosage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Instruction")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MedicineName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RecordId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PrescriptionId");
+
+                    b.HasIndex("RecordId");
+
+                    b.ToTable("Prescription");
+                });
+
             modelBuilder.Entity("QuanLyPhongKhamVaDatLich.Models.PrescriptionDetail", b =>
                 {
                     b.Property<int>("PrescriptionDetailId")
@@ -216,7 +293,11 @@ namespace QuanLyPhongKhamVaDatLich.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PrescriptionDetailId"));
 
                     b.Property<string>("Dosage")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("MedicalRecordId")
+                        .HasColumnType("int");
 
                     b.Property<int>("MedicineId")
                         .HasColumnType("int");
@@ -224,16 +305,44 @@ namespace QuanLyPhongKhamVaDatLich.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("RecordId")
-                        .HasColumnType("int");
-
                     b.HasKey("PrescriptionDetailId");
+
+                    b.HasIndex("MedicalRecordId");
 
                     b.HasIndex("MedicineId");
 
-                    b.HasIndex("RecordId");
-
                     b.ToTable("PrescriptionDetail");
+                });
+
+            modelBuilder.Entity("QuanLyPhongKhamVaDatLich.Models.Receptionist", b =>
+                {
+                    b.Property<int>("ReceptionistId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReceptionistId"));
+
+                    b.Property<decimal>("BaseSalary")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("HireDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ReceptionistId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Receptionist");
                 });
 
             modelBuilder.Entity("QuanLyPhongKhamVaDatLich.Models.Specialty", b =>
@@ -311,7 +420,35 @@ namespace QuanLyPhongKhamVaDatLich.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("QuanLyPhongKhamVaDatLich.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
                     b.Navigation("Specialty");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("QuanLyPhongKhamVaDatLich.Models.LeaveRequest", b =>
+                {
+                    b.HasOne("QuanLyPhongKhamVaDatLich.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("QuanLyPhongKhamVaDatLich.Models.MedicalRecord", b =>
+                {
+                    b.HasOne("QuanLyPhongKhamVaDatLich.Models.Appointment", "Appointment")
+                        .WithMany()
+                        .HasForeignKey("AppointmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Appointment");
                 });
 
             modelBuilder.Entity("QuanLyPhongKhamVaDatLich.Models.Patient", b =>
@@ -325,14 +462,8 @@ namespace QuanLyPhongKhamVaDatLich.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("QuanLyPhongKhamVaDatLich.Models.PrescriptionDetail", b =>
+            modelBuilder.Entity("QuanLyPhongKhamVaDatLich.Models.Prescription", b =>
                 {
-                    b.HasOne("QuanLyPhongKhamVaDatLich.Models.Medicine", "Medicine")
-                        .WithMany()
-                        .HasForeignKey("MedicineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("QuanLyPhongKhamVaDatLich.Models.MedicalRecord", "MedicalRecord")
                         .WithMany()
                         .HasForeignKey("RecordId")
@@ -340,8 +471,34 @@ namespace QuanLyPhongKhamVaDatLich.Migrations
                         .IsRequired();
 
                     b.Navigation("MedicalRecord");
+                });
+
+            modelBuilder.Entity("QuanLyPhongKhamVaDatLich.Models.PrescriptionDetail", b =>
+                {
+                    b.HasOne("QuanLyPhongKhamVaDatLich.Models.MedicalRecord", "MedicalRecord")
+                        .WithMany()
+                        .HasForeignKey("MedicalRecordId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("QuanLyPhongKhamVaDatLich.Models.Medicine", "Medicine")
+                        .WithMany()
+                        .HasForeignKey("MedicineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MedicalRecord");
 
                     b.Navigation("Medicine");
+                });
+
+            modelBuilder.Entity("QuanLyPhongKhamVaDatLich.Models.Receptionist", b =>
+                {
+                    b.HasOne("QuanLyPhongKhamVaDatLich.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

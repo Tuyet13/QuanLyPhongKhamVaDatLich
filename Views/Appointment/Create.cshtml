@@ -1,0 +1,89 @@
+﻿@model QuanLyPhongKhamVaDatLich.Models.Appointment
+
+@{
+    ViewData["Title"] = "Đặt lịch khám";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<div class="card shadow border-0">
+    <div class="card-header bg-primary text-white">
+        <h3 class="mb-0">
+            <i class="fa fa-calendar-plus"></i>
+            Đặt lịch khám mới
+        </h3>
+    </div>
+
+    <div class="card-body">
+
+        <form asp-action="Create" method="post">
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">
+                    Bệnh nhân
+                </label>
+
+                <select asp-for="PatientId" class="form-select">
+
+                    @foreach (var patient in ViewBag.Patient)
+                    {
+                        <option value="@patient.PatientId">
+                            @patient.FullName
+                        </option>
+                    }
+
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">
+                    Bác sĩ
+                </label>
+
+                <select asp-for="DoctorId" class="form-select">
+
+                    @foreach (var doctor in ViewBag.Doctor)
+                    {
+                        <option value="@doctor.DoctorId">
+                            @doctor.FullName
+                        </option>
+                    }
+
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">
+                    Ngày khám
+                </label>
+
+                <input asp-for="AppointmentDate"
+                       type="datetime-local"
+                       class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">
+                    Trạng thái
+                </label>
+
+                <select asp-for="Status" class="form-select">
+                    <option value="Chờ khám">Chờ khám</option>
+                    <option value="Đã khám">Đã khám</option>
+                    <option value="Đã hủy">Đã hủy</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-success">
+                <i class="fa fa-save"></i>
+                Lưu lịch hẹn
+            </button>
+
+            <a asp-action="Index"
+               class="btn btn-secondary">
+                Quay lại
+            </a>
+
+        </form>
+
+    </div>
+</div>

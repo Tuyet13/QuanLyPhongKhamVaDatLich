@@ -1,0 +1,72 @@
+﻿@model QuanLyPhongKhamVaDatLich.Models.Doctor
+@{
+    ViewData["Title"] = "Cấp tài khoản bác sĩ";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var specialties = ViewBag.Specialties as List<QuanLyPhongKhamVaDatLich.Models.Specialty> ?? new List<QuanLyPhongKhamVaDatLich.Models.Specialty>();
+}
+
+<div class="container-fluid px-4 py-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                <div class="mb-4">
+                    <h5 class="fw-bold text-dark mb-1"><i class="fa fa-user-plus text-primary me-2"></i>Thêm bác sĩ & Tạo tài khoản mới</h5>
+                    <p class="text-muted small">Nhập thông tin hồ sơ nghiệp vụ y khoa đồng thời phân phối tài khoản đăng nhập.</p>
+                </div>
+
+                <form asp-controller="Admin" asp-action="CreateDoctor" method="post">
+                    @if (TempData["Error"] != null)
+                    {
+                        <div class="alert alert-danger">
+                            @TempData["Error"]
+                        </div>
+                    }
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
+                            <h6 class="text-primary fw-bold border-bottom pb-2 mb-2"><i class="fa fa-id-card me-2"></i>Thông tin hành chính</h6>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Họ và tên bác sĩ <span class="text-danger">*</span></label>
+                            <input type="text" asp-for="FullName" class="form-control rounded-3" placeholder="Nhập họ và tên bác sĩ" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Chuyên khoa đảm nhận <span class="text-danger">*</span></label>
+                            <select asp-for="SpecialtyId" class="form-select rounded-3" required>
+                                <option value="">-- Lựa chọn chuyên khoa --</option>
+                                @foreach (var sp in specialties)
+                                {
+                                    <option value="@sp.SpecialtyId">@sp.SpecialtyName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Số điện thoại liên hệ</label>
+                            <input type="text" asp-for="Phone" class="form-control rounded-3" placeholder="Số điện thoại di động" />
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mb-4 p-3 bg-light rounded-3 border mx-0">
+                        <div class="col-12 px-0">
+                            <h6 class="text-success fw-bold mb-2"><i class="fa fa-key me-2"></i>Cấp tài khoản đăng nhập</h6>
+                        </div>
+                        <div class="col-md-6 px-0 pe-md-2">
+                            <label class="form-label small fw-bold">Địa chỉ Email đăng nhập <span class="text-danger">*</span></label>
+                            <input type="email" name="Email" class="form-control rounded-3" placeholder="doctor@clinic.com" required />
+                        </div>
+                        <div class="col-md-6 px-0 ps-md-2">
+                            <label class="form-label small fw-bold">Mật khẩu khởi tạo <span class="text-danger">*</span></label>
+                            <input type="password" name="Password" class="form-control rounded-3" placeholder="Nhập mật khẩu" required />
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                        <a asp-controller="Admin" asp-action="Doctors" class="btn btn-light border px-4 rounded-pill">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary px-4 rounded-pill">Xác nhận cấp & lưu hồ sơ</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

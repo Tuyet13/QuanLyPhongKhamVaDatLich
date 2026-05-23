@@ -1,0 +1,53 @@
+﻿@model IEnumerable<QuanLyPhongKhamVaDatLich.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Lịch hẹn hôm nay";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+<div class="card shadow-sm">
+    <div class="card-header bg-primary text-white">
+        <h4>
+            <i class="fa fa-calendar-day"></i>
+            Lịch hẹn hôm nay
+        </h4>
+    </div>
+
+    <div class="card-body">
+
+        <table class="table table-hover align-middle">
+
+            <thead class="table-light">
+                <tr>
+                    <th>Mã</th>
+                    <th>Bệnh nhân</th>
+                    <th>Thời gian</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.AppointmentId</td>
+
+                        <td>
+                            @(item.Patient != null
+                                                    ? item.Patient.FullName
+                                                    : "NULL PATIENT")
+                    </td>
+
+                        <td>
+                            @item.AppointmentDate.ToString("dd/MM/yyyy HH:mm")
+                        </td>
+
+                        <td>
+                            @item.Status
+                        </td>
+                    </tr>
+                                }
+
+            </tbody>
+    </table>
+
+</div>

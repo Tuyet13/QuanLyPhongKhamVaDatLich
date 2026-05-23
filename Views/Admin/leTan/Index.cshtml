@@ -1,0 +1,92 @@
+﻿@model IEnumerable<QuanLyPhongKhamVaDatLich.Models.Receptionist>
+@{
+    ViewData["Title"] = "Danh sách lễ tân";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    .table-hover tbody tr { transition: background-color 0.2s; }
+    .table-hover tbody tr:hover { background-color: rgba(74, 0, 224, 0.03) !important; }
+    .btn-action-custom { border-radius: 8px; transition: all 0.2s; }
+    .btn-action-custom:hover { transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+</style>
+
+<div class="container-fluid px-4 py-3">
+    <div class="card border-0 shadow-sm p-4" style="border-radius: 16px; background: #ffffff;">
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show border-0 mb-4" style="border-radius: 10px; background-color: rgba(40, 167, 69, 0.1); color: #28a745;">
+                <i class="fa fa-check-circle me-2"></i> @TempData["Success"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0 text-dark">
+                <i class="fa fa-user-clock text-primary me-2"></i>Quản lý nhân viên lễ tân
+            </h5>
+            <a asp-controller="Admin" asp-action="CreateReceptionist" class="btn btn-primary px-4 rounded-pill shadow-sm" style="background: #4a00e0; border: none;">
+                <i class="fa fa-plus me-2"></i>Thêm lễ tân mới
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle border-0 mb-0">
+                <thead class="table-light text-muted small text-uppercase">
+                    <tr>
+                        <th width="8%" class="ps-3">STT</th>
+                        <th width="27%">Họ và tên</th>
+                        <th width="20%">Số điện thoại</th>
+                        <th width="20%">Lương cơ bản</th>
+                        <th width="15%">Ngày vào làm</th>
+                        <th width="10%" class="text-center">Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        int stt = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-secondary fw-bold ps-3">#@stt</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; background-color: rgba(74, 0, 224, 0.1); color: #4a00e0;">
+                                            <i class="fa fa-user-tie fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <span class="fw-semibold text-dark d-block">@item.FullName</span>
+                                            <small class="text-muted" style="font-size: 11px;">@(item.User != null ? item.User.Email : "---")</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-secondary fw-medium">@(string.IsNullOrEmpty(item.Phone) ? "---" : item.Phone)</td>
+                                <td class="text-dark fw-bold">@item.BaseSalary.ToString("N0") đ</td>
+                                <td class="text-secondary small">@item.HireDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <div class="d-flex justify-content-center gap-1">
+                                        <a asp-controller="Admin" asp-action="DetailsReceptionist" asp-route-id="@item.ReceptionistId" class="btn btn-sm btn-light border btn-action-custom" title="Chi tiết"><i class="fa fa-eye text-info"></i></a>
+                                        <a asp-controller="Admin" asp-action="EditReceptionist" asp-route-id="@item.ReceptionistId" class="btn btn-sm btn-light border btn-action-custom" title="Sửa"><i class="fa fa-edit text-warning"></i></a>
+                                        <form asp-controller="Admin" asp-action="DeleteReceptionist" asp-route-id="@item.ReceptionistId" method="post" class="d-inline" onsubmit="return confirm('Bạn có chắc chắn muốn xóa nhân viên lễ tân này không?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-light border btn-action-custom" title="Xóa"><i class="fa fa-trash text-danger"></i></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            stt++;
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-5">Chưa có dữ liệu nhân viên lễ tân nào.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

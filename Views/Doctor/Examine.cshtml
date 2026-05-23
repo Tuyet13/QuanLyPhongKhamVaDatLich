@@ -1,0 +1,143 @@
+﻿@model QuanLyPhongKhamVaDatLich.Models.Appointment
+
+@{
+    ViewData["Title"] = "Khám bệnh";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h2 class="fw-bold mb-4">
+    Khám bệnh
+</h2>
+
+<div class="mb-4">
+
+    <h5>
+        Bệnh nhân:
+        <strong>@Model.Patient?.FullName</strong>
+    </h5>
+
+    <p class="text-muted">
+        Ngày khám:
+        @Model.AppointmentDate.ToString("dd/MM/yyyy HH:mm")
+    </p>
+
+</div>
+
+<form asp-action="SaveExamination" method="post">
+
+    <input type="hidden"
+           name="appointmentId"
+           value="@Model.AppointmentId" />
+
+    <div class="alert alert-warning">
+
+        AppointmentId : @Model.AppointmentId <br />
+
+        PatientId : @Model.PatientId <br />
+
+        PatientName : @Model.Patient?.FullName <br />
+
+        DoctorId : @Model.DoctorId
+
+    </div>
+
+    <!-- TRIỆU CHỨNG -->
+    <div class="form-group mb-3">
+
+        <label class="fw-bold">Triệu chứng</label>
+
+        <textarea class="form-control"
+                  rows="3"
+                  name="symptom"
+                  placeholder="Nhập triệu chứng bệnh"></textarea>
+
+    </div>
+
+    <!-- CHẨN ĐOÁN -->
+    <div class="form-group mb-3">
+
+        <label class="fw-bold">Chẩn đoán</label>
+
+        <textarea class="form-control"
+                  rows="3"
+                  name="diagnosis"
+                  placeholder="Nhập chẩn đoán"></textarea>
+
+    </div>
+
+    <!-- GHI CHÚ -->
+    <div class="form-group mb-3">
+
+        <label class="fw-bold">Ghi chú bác sĩ</label>
+
+        <textarea class="form-control"
+                  rows="3"
+                  name="note"
+                  placeholder="Ghi chú thêm"></textarea>
+
+    </div>
+
+    <!-- KÊ ĐƠN -->
+    <div class="form-group mb-3">
+
+        <label class="fw-bold">Kê đơn thuốc</label>
+
+        <textarea class="form-control"
+                  rows="3"
+                  name="prescription"
+                  placeholder="Ví dụ: Paracetamol 500mg"></textarea>
+
+    </div>
+
+    <!-- THUỐC -->
+    <div class="form-group mb-3">
+
+        <label class="fw-bold">Tên thuốc</label>
+
+        <input type="text"
+               class="form-control"
+               name="medicineName"
+               placeholder="Nhập tên thuốc" />
+
+    </div>
+
+    <!-- SỐ LƯỢNG -->
+    <div class="form-group mb-3">
+
+        <label class="fw-bold">Số lượng</label>
+
+        <input type="number"
+               class="form-control"
+               name="quantity" />
+
+    </div>
+
+    <!-- LIỀU DÙNG -->
+    <div class="form-group mb-3">
+
+        <label class="fw-bold">Liều dùng</label>
+
+        <input type="text"
+               class="form-control"
+               name="dosage"
+               placeholder="Ví dụ: 2 viên/ngày" />
+
+    </div>
+
+    <!-- HƯỚNG DẪN -->
+    <div class="form-group mb-4">
+
+        <label class="fw-bold">Hướng dẫn sử dụng</label>
+
+        <textarea class="form-control"
+                  rows="2"
+                  name="instruction"
+                  placeholder="Uống sau ăn"></textarea>
+
+    </div>
+
+    <button type="submit" class="btn btn-success px-4">
+        Lưu khám bệnh
+    </button>
+
+</form>

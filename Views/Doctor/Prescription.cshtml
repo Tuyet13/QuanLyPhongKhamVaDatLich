@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Kê đơn thuốc";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h2 class="page-title">Kê đơn thuốc</h2>
+
+<form>
+
+    <div class="form-group">
+
+        <label>Tên thuốc</label>
+
+        <select class="form-control">
+
+            @foreach (var medicine in ViewBag.Medicines)
+            {
+                <option>
+                    @medicine.MedicineName
+                </option>
+            }
+
+        </select>
+
+    </div>
+
+    <div class="form-group mt-3">
+
+        <label>Số lượng</label>
+
+        <input type="number" class="form-control" />
+
+    </div>
+
+    <div class="form-group mt-3">
+
+        <label>Liều dùng</label>
+
+        <textarea class="form-control" rows="3"></textarea>
+
+    </div>
+
+    <button class="btn btn-primary mt-4">
+        Lưu đơn thuốc
+    </button>
+
+</form>

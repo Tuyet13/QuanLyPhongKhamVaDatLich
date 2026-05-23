@@ -1,0 +1,304 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Doctor Portal</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/doctor.css" />
+
+    @RenderSection("Styles", required: false)
+
+    <style>
+        :root {
+            /* Đổi màu gốc của Sidebar sang màu trắng */
+            --primary-doctor-start: #ffffff;
+            --primary-doctor-end: #ffffff;
+            --bg-light: #f4f7fe;
+            --text-sidebar: #1e293b;
+        }
+
+        body {
+            background-color: var(--bg-light) !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow-x: hidden !important;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        /* SIDEBAR - CHUYỂN NỀN TRẮNG TINH */
+        .doctor-sidebar {
+            min-width: 220px; /* Giảm chiều rộng menu bên trái */
+            max-width: 220px;
+            background: #ffffff !important; /* Ép Sidebar sang nền trắng tinh */
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow-y: auto;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 10px 0;
+            z-index: 1000;
+            border-right: 1px solid #e2e8f0; /* Thêm viền mảnh tách biệt thanh menu */
+            box-shadow: 4px 0 18px rgba(0,0,0,0.03);
+        }
+
+        /* BRAND (KHU VỰC LOGO) */
+        .doctor-brand-section {
+            text-align: center;
+            padding: 0 20px;
+            margin-bottom: 8px;
+        }
+
+        .doctor-icon-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            background-color: #ffffff;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            margin-bottom: 14px;
+            border: 1px solid #f1f5f9;
+        }
+
+        .doctor-logo {
+            width: 50px; /* Thu nhỏ logo */
+            height: 50px;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .doctor-hospital-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a !important; /* Chuyển tên bệnh viện sang chữ đen đậm */
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .doctor-hospital-subtitle {
+            font-size: 10px;
+            color: #64748b !important; /* Phụ đề màu xám dịu */
+            display: block;
+            margin-top: 4px;
+        }
+
+        /* MENU ITEMS CHƯA HOẠT ĐỘNG (MẶC ĐỊNH CHỮ ĐEN) */
+        .doctor-nav-link {
+            color: #334155 !important; /* Đổi toàn bộ chữ menu mặc định sang màu đen xám */
+            padding: 8px 14px;
+            border-radius: 14px;
+            margin: 2px 10px;
+            transition: all 0.2s ease-in-out;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            text-decoration: none !important;
+            font-size: 14px;
+        }
+
+            .doctor-nav-link i {
+                width: 20px;
+                font-size: 14px;
+                color: #475569 !important; /* Đổi icon chưa chọn sang màu xám đen */
+            }
+
+            .doctor-nav-link:hover {
+                background: #f1f5f9 !important; /* Hover nền xám nhạt */
+                color: #2563EB !important; /* Hover chữ chuyển xanh dương */
+                transform: translateX(4px);
+            }
+
+                .doctor-nav-link:hover i {
+                    color: #2563EB !important;
+                }
+
+            /* MENU ITEM ĐANG ACTIVE (MỤC ĐƯỢC CHỌN) */
+            .doctor-nav-link.active {
+                background: #eff6ff !important; /* Khối được chọn có nền xanh nhạt tinh tế */
+                color: #2563EB !important; /* Chữ màu xanh dương làm điểm nhấn */
+                font-weight: 700;
+                box-shadow: none !important;
+            }
+
+                .doctor-nav-link.active i {
+                    color: #2563EB !important; /* Icon mục active chuyển xanh dương */
+                }
+
+        /* KHU VỰC ĐĂNG XUẤT */
+        .doctor-logout-border {
+            border-top: 1px solid #f1f5f9;
+            padding-top: 15px;
+            margin-top: auto;
+        }
+
+        .logout-btn {
+            color: #dc2626 !important; /* Chữ đăng xuất màu đỏ lịch sự */
+            background: #fef2f2 !important; /* Khối nền hồng đỏ nhạt */
+        }
+
+            .logout-btn i {
+                color: #dc2626 !important;
+            }
+
+            .logout-btn:hover {
+                background: #dc2626 !important; /* Hover hẳn vào nút thì nền đỏ rực */
+                color: #ffffff !important; /* Chữ chuyển trắng */
+            }
+
+                .logout-btn:hover i {
+                    color: #ffffff !important;
+                }
+
+        /* ================= VÙNG NỘI DUNG PHẢI: KHÔI PHỤC VÀ GIỮ NGUYÊN GIAO DIỆN GỐC ================= */
+        .doctor-main-wrapper {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            padding: 30px !important;
+            box-sizing: border-box;
+        }
+
+            /* Xóa bỏ thuộc tính ép nền trắng (!important) lỗi ở file cũ để các thẻ con tự hiển thị màu của nó */
+            .doctor-main-wrapper .panel,
+            .doctor-main-wrapper .dashboard,
+            .doctor-main-wrapper .content-grid {
+                max-width: 100% !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                background: transparent; /* Trả lại nền rỗng để không đè chết các card màu */
+            }
+    </style>
+</head>
+<body>
+
+    <div class="d-flex">
+        <nav class="doctor-sidebar py-4">
+
+            <div class="doctor-brand-section text-center">
+
+                <div class="doctor-icon-box">
+
+                    <img src="/imge/am2t.jpg"
+                         class="doctor-logo"
+                         alt="Logo" />
+
+                </div>
+
+                <h5 class="doctor-hospital-title">
+                    BỆNH VIỆN AM2T
+                </h5>
+
+                <span class="doctor-hospital-subtitle">
+                    AM2T Medical Center
+                </span>
+
+            </div>
+
+            <div class="nav flex-column mb-auto">
+
+                <a class="doctor-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString()=="Dashboard" ? "active" : "")"
+                   href="@Url.Action("Dashboard", "Doctor")">
+                    <i class="fa fa-th-large me-2"></i>
+                    Dashboard
+                </a>
+
+                <a class="doctor-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString()=="Schedule" ? "active" : "")"
+                   href="@Url.Action("Schedule", "Doctor")">
+                    <i class="fa fa-calendar-check me-2"></i>
+                    Lịch khám
+                </a>
+
+                <a class="doctor-nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString()=="Appointment"
+                  && ViewContext.RouteData.Values["Action"]?.ToString()=="Create" ? "active" : "")"
+                   href="@Url.Action("Create", "Appointment")">
+                    <i class="fa fa-calendar-plus me-2"></i>
+                    Đặt lịch khám
+                </a>
+
+                <a class="doctor-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString()=="AppointmentsToday" ? "active" : "")"
+                   href="@Url.Action("AppointmentsToday", "Doctor")">
+                    <i class="fa fa-calendar-day me-2"></i>
+                    Lịch hẹn
+                </a>
+
+                <a class="doctor-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString()=="Patients" ? "active" : "")"
+                   href="@Url.Action("Patients", "Doctor")">
+                    <i class="fa fa-user-injured me-2"></i>
+                    Bệnh nhân
+                </a>
+
+                <a class="doctor-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString()=="MedicalRecords" ? "active" : "")"
+                   href="@Url.Action("MedicalRecords", "Doctor")">
+                    <i class="fa fa-file-medical-alt me-2"></i>
+                    Hồ sơ bệnh án
+                </a>
+
+                <a class="doctor-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString()=="PrescriptionList" ? "active" : "")"
+                   href="@Url.Action("PrescriptionList", "Doctor")">
+                    <i class="fa fa-pills me-2"></i>
+                    Đơn thuốc
+                </a>
+
+                <a class="doctor-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString()=="ExaminationHistory" ? "active" : "")"
+                   href="@Url.Action("ExaminationHistory", "Doctor")">
+                    <i class="fa fa-notes-medical me-2"></i>
+                    Lịch sử khám
+                </a>
+
+                <a class="doctor-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString()=="Profile" ? "active" : "")"
+                   href="@Url.Action("Profile", "Doctor")">
+                    <i class="fa fa-user-md me-2"></i>
+                    Hồ sơ cá nhân
+                </a>
+
+                <a class="doctor-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString()=="Notifications" ? "active" : "")"
+                   href="@Url.Action("Notifications", "Doctor")">
+                    <i class="fa fa-bell me-2"></i>
+                    Thông báo
+                </a>
+
+                <a class="doctor-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString()=="LeaveRequest" ? "active" : "")"
+                   href="@Url.Action("LeaveRequest", "Doctor")">
+                    <i class="fa fa-calendar-times me-2"></i>
+                    Xin nghỉ phép
+                </a>
+
+            </div>
+
+            <div class="doctor-logout-border">
+
+                <a class="doctor-nav-link logout-btn"
+                   href="@Url.Action("Logout", "Account")"
+                   onclick="return confirm('Bạn có chắc chắn muốn đăng xuất?');">
+
+                    <i class="fa fa-sign-out-alt me-2"></i>
+                    Đăng xuất
+
+                </a>
+
+            </div>
+
+        </nav>
+
+        <div class="doctor-main-wrapper">
+            @RenderBody()
+        </div>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+</html>

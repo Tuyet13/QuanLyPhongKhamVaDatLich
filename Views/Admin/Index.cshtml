@@ -42,7 +42,7 @@
             width: 10px;
             height: 10px;
             border-radius: 50%;
-            background: var(--primary-admin);
+            background: #0d6efd; /* Sửa biến CSS tĩnh để tránh lỗi không nhận màu */
         }
 </style>
 
@@ -121,17 +121,17 @@
 
         <div class="row g-3">
             <div class="col-md-6">
-                <a asp-action="UserList" class="card border-0 shadow-sm p-4 text-center text-decoration-none bg-white h-100" style="border-radius: 16px;">
+                <a asp-controller="Admin" asp-action="UserList" class="card border-0 shadow-sm p-4 text-center text-decoration-none bg-white h-100" style="border-radius: 16px;">
                     <i class="fa fa-id-card fa-2x text-info mb-3"></i>
                     <h6 class="fw-bold text-dark mb-1">Hồ sơ Bệnh nhân</h6>
                     <p class="text-muted small mb-0">Xem và quản lý thông tin</p>
                 </a>
             </div>
             <div class="col-md-6">
-                <a asp-controller="Doctor" asp-action="Index" class="card border-0 shadow-sm p-4 text-center text-decoration-none bg-white h-100" style="border-radius: 16px;">
+                <a asp-controller="Admin" asp-action="Doctors" class="card border-0 shadow-sm p-4 text-center text-decoration-none bg-white h-100" style="border-radius: 16px;">
                     <i class="fa fa-stethoscope fa-2x text-primary mb-3"></i>
-                    <h6 class="fw-bold text-dark mb-1">Lịch trực Bác sĩ</h6>
-                    <p class="text-muted small mb-0">Điều phối nhân sự y tế</p>
+                    <h6 class="fw-bold text-dark mb-1">Quản lý Bác sĩ</h6>
+                    <p class="text-muted small mb-0">Cấp tài khoản & Điều phối nhân sự</p>
                 </a>
             </div>
         </div>
@@ -150,7 +150,7 @@
                                 <span class="fw-bold small text-primary">Mã #@item.AppointmentId</span>
                                 <span class="text-muted" style="font-size: 11px;">@item.AppointmentDate.ToString("HH:mm")</span>
                             </div>
-                            <p class="mb-0 small fw-medium mt-1">Bác sĩ: @(item.Doctor?.FullName ?? "Đang chờ...")</p>
+                            <p class="mb-0 small fw-medium mt-1">Bác sĩ: @(item.Doctor != null ? item.Doctor.FullName : "Đang chờ...")</p>
                             <p class="text-muted small mb-0">Ngày khám: @item.AppointmentDate.ToString("dd/MM/yyyy")</p>
                         </div>
                     }

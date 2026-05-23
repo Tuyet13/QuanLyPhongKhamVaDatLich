@@ -1,0 +1,61 @@
+﻿@model IEnumerable<QuanLyPhongKhamVaDatLich.Models.StaffPerformanceViewModel>
+
+@{
+    ViewData["Title"] = "Quản lý Hiệu suất & Lương Nhân viên";
+}
+
+<div class="container-fluid mt-4">
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="m-0 font-weight-bold"><i class="fas fa-users-cog"></i> Bảng Theo Dõi Hiệu Suất & Lương Bổng Nhân Viên</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped align-middle" width="100%" cellspacing="0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nhân viên</th>
+                            <th>Vai trò</th>
+                            <th>Thâm niên</th>
+                            <th>Hôm nay</th>
+                            <th class="text-center">Số ngày nghỉ (Tháng này)</th>
+                            <th>Hiệu suất làm việc</th>
+                            <th>Bệnh nhân đánh giá</th>
+                            <th class="text-end">Lương tạm tính (Tháng)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var staff in Model)
+                            {
+                                <tr>
+                                    <td><strong>@staff.FullName</strong></td>
+                                    <td>
+                                        <span class="badge @(staff.Role == "Bác sĩ" ? "bg-info text-dark" : "bg-warning text-dark")">@staff.Role</span>
+                                    </td>
+                                    <td>@staff.Seniority</td>
+                                    <td>@staff.StatusToday</td>
+                                    <td class="text-center text-danger"><strong>@staff.LeaveDaysThisMonth ngày</strong></td>
+                                    <td>
+                                        <span class="text-success font-weight-bold">@staff.TotalWorkCount ca</span> xử lý
+                                    </td>
+                                    <td>
+                                        <span class="text-warning">★</span> <strong>@staff.Rating.ToString("F1") / 5.0</strong>
+                                    </td>
+                                    <td class="text-end text-primary font-weight-bold">@staff.EstimatedSalary.ToString("N0") đ</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8" class="text-center text-muted">Không có dữ liệu nhân sự để hiển thị.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

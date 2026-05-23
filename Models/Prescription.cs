@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace QuanLyPhongKhamVaDatLich.Models
 {
@@ -6,8 +7,18 @@ namespace QuanLyPhongKhamVaDatLich.Models
     {
         [Key]
         public int PrescriptionId { get; set; }
+
         public int RecordId { get; set; }
-        public string MedicineName { get; set; } = ""; // Tên thuốc
-        public int Quantity { get; set; } // Số lượng
+
+        public string? MedicineName { get; set; }
+
+        public int Quantity { get; set; }
+
+        public string? Dosage { get; set; }
+
+        public string? Instruction { get; set; }
+
+        [ForeignKey("RecordId")]
+        public virtual MedicalRecord? MedicalRecord { get; set; }
     }
 }

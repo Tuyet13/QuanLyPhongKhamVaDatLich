@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Xin nghỉ phép";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<div class="panel">
+
+    <h2>Đơn xin nghỉ phép</h2>
+
+    <form asp-action="LeaveRequest" method="post">
+
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+
+            <label>Ngày nghỉ</label>
+
+            <input type="date"
+                   name="leaveDate"
+                   class="form-control"
+                   required />
+
+        </div>
+
+        <div class="mb-3">
+
+            <label>Lý do</label>
+
+            <textarea name="reason"
+                      class="form-control"
+                      rows="4"
+                      required></textarea>
+
+        </div>
+
+        <button type="submit"
+                class="btn btn-primary">
+
+            Gửi yêu cầu
+
+        </button>
+
+    </form>
+
+</div>

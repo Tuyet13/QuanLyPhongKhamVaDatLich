@@ -1,0 +1,121 @@
+﻿@model IEnumerable<QuanLyPhongKhamVaDatLich.Models.Patient>
+
+@{
+    ViewData["Title"] = "Bệnh nhân";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title mb-0">
+        <i class="fas fa-user-injured text-primary"></i>
+        Danh sách bệnh nhân
+    </h2>
+
+    <span class="badge bg-primary fs-6">
+        Tổng: @Model.Count() bệnh nhân
+    </span>
+</div>
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+        <input type="text"
+               id="searchPatient"
+               class="form-control"
+               placeholder="🔍 Tìm theo tên hoặc số điện thoại..." />
+    </div>
+</div>
+
+<div class="card shadow-sm border-0">
+    <div class="card-body p-0">
+
+        <table class="table table-hover align-middle mb-0" id="patientTable">
+            <thead class="table-light">
+                <tr>
+                    <th>Bệnh nhân</th>
+                    <th>Số điện thoại</th>
+                    <th width="220">Thao tác</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-circle me-3">
+                                    @item.FullName.Substring(0, 1)
+                                </div>
+
+                                <div>
+                                    <strong>@item.FullName</strong>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            @item.Phone
+                        </td>
+
+                        <td>
+                            <a asp-action="PatientHistory"
+                               asp-route-id="@item.PatientId"
+                               class="btn btn-info btn-sm">
+                                <i class="fas fa-clock-rotate-left"></i>
+                                Lịch sử khám
+                            </a>
+
+                            <a asp-action="MedicalRecord"
+                               asp-route-id="@item.PatientId"
+                               class="btn btn-success btn-sm">
+                                <i class="fas fa-file-medical"></i>
+                                Hồ sơ
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+<style>
+    .avatar-circle{
+        width:45px;
+        height:45px;
+        border-radius:50%;
+        background:#0d6efd;
+        color:white;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-weight:bold;
+    }
+
+    .page-title{
+        font-weight:700;
+    }
+
+    .card{
+        border-radius:15px;
+    }
+</style>
+
+<script>
+    document.getElementById("searchPatient")
+        .addEventListener("keyup", function () {
+
+        let value = this.value.toLowerCase();
+
+        document.querySelectorAll("#patientTable tbody tr")
+            .forEach(row => {
+
+            row.style.display =
+                row.innerText.toLowerCase().includes(value)
+                ? ""
+                : "none";
+        });
+    });
+</script>

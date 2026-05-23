@@ -1,0 +1,46 @@
+﻿@model IEnumerable<QuanLyPhongKhamVaDatLich.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Thông báo";
+    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
+}
+
+<h2 class="mb-4">
+    <i class="fa fa-bell text-primary"></i>
+    Thông báo
+</h2>
+
+<div class="card">
+    <div class="card-body">
+
+        @if (!Model.Any())
+        {
+            <div class="alert alert-info">
+                Không có thông báo mới.
+            </div>
+        }
+        else
+        {
+            <ul class="list-group">
+
+                @foreach (var item in Model)
+                {
+                    <li class="list-group-item d-flex justify-content-between">
+
+                        <span>
+                            <i class="fa fa-user-plus text-primary"></i>
+                            @item.Patient?.FullName đã đặt lịch khám
+                        </span>
+
+                        <small class="text-muted">
+                            @item.AppointmentDate.ToString("dd/MM/yyyy HH:mm")
+                        </small>
+
+                    </li>
+                }
+
+            </ul>
+        }
+
+    </div>
+</div>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // Cần thêm cái này để dùng .Include()
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using QuanLyPhongKhamVaDatLich.Data;
 using QuanLyPhongKhamVaDatLich.Models;
 using System.Linq;
@@ -16,42 +17,55 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
         }
 
         // ==========================================================
-        // INDEX: Hiển thị danh sách (Admin) hoặc Profile (Bệnh nhân)
-        // Hiện tại tớ làm theo hướng Dashboard cho Bệnh nhân nhé
+        // INDEX: Giao diện Dashboard chính của từng bệnh nhân cụ thể
         // ==========================================================
         public IActionResult Index()
         {
-            // Lấy danh sách kèm thông tin tài khoản để tránh lỗi null navigation property
-            var patients = _context.Patient.Include(p => p.User).ToList();
-            return View(patients);
+            // 1. Kiểm tra quyền hạn bằng Session công thủ công
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            string userRole = HttpContext.Session.GetString("UserRole");
+
+            if (userId == null || userRole != "Patient")
+            {
+                // Chưa đăng nhập hoặc sai quyền -> Đá thẳng về trang Login
+                return RedirectToAction("Login", "Account");
+            }
+
+            // 2. Tìm đúng bệnh nhân sở hữu UserId đang lưu trong Session
+            var patient = _context.Patient
+                .Include(p => p.User) // Kết hợp dữ liệu tài khoản
+                .FirstOrDefault(p => p.UserId == userId.Value);
+
+            if (patient == null)
+            {
+                return NotFound("Không tìm thấy dữ liệu hồ sơ cá nhân cho tài khoản này.");
+            }
+
+            return View(patient);
         }
 
         // =========================
-        // GIAO DIỆN THÊM BỆNH NHÂN
-        // =========================
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Patient patient)
-        {
-            // Xóa check ModelState nếu mày không truyền UserId từ View (vì UserId là bắt buộc trong DB)
-            // Cách tốt nhất là gán một User mặc định hoặc bỏ qua validation UserId ở đây
-            _context.Patient.Add(patient);
-            _context.SaveChanges();
-            return RedirectToAction(nameof(Index));
-        }
-
-        // =========================
-        // GIAO DIỆN SỬA
+        // GIAO DIỆN SỬA THÔNG TIN
         // =========================
         public IActionResult Edit(int id)
         {
+            int? currentUserId = HttpContext.Session.GetInt32("UserId");
+            string userRole = HttpContext.Session.GetString("UserRole");
+
+            if (currentUserId == null || userRole != "Patient")
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
             var patient = _context.Patient.FirstOrDefault(p => p.PatientId == id);
             if (patient == null) return NotFound();
+
+            // Chặn đứng hành vi hack URL: Bệnh nhân chỉ được quyền sửa hồ sơ của CHÍNH MÌNH
+            if (patient.UserId != currentUserId.Value)
+            {
+                return Forbid();
+            }
+
             return View(patient);
         }
 
@@ -59,7 +73,8 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Patient patient)
         {
-            if (id != patient.PatientId) return NotFound();
+            int? currentUserId = HttpContext.Session.GetInt32("UserId");
+            if (currentUserId == null || id != patient.PatientId) return NotFound();
 
             try
             {
@@ -70,20 +85,6 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
             {
                 if (!_context.Patient.Any(e => e.PatientId == patient.PatientId)) return NotFound();
                 else throw;
-            }
-            return RedirectToAction(nameof(Index));
-        }
-
-        // =========================
-        // XÓA BỆNH NHÂN
-        // =========================
-        public IActionResult Delete(int id)
-        {
-            var patient = _context.Patient.Find(id);
-            if (patient != null)
-            {
-                _context.Patient.Remove(patient);
-                _context.SaveChanges();
             }
             return RedirectToAction(nameof(Index));
         }

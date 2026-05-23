@@ -10,8 +10,12 @@ namespace QuanLyPhongKhamVaDatLich.Models
         public int RecordId { get; set; }
 
         public int AppointmentId { get; set; }
+        public string? Symptom { get; set; }
+
         public string Diagnosis { get; set; } = string.Empty;
         public string? Note { get; set; }
+        public string? PrescriptionSummary { get; set; }
+
         public DateTime RecordDate { get; set; } = DateTime.Now;
 
         [ForeignKey("AppointmentId")]
