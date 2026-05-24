@@ -1,0 +1,49 @@
+﻿@model QuanLyPhongKhamVaDatLich.Models.Doctor
+@{
+    ViewData["Title"] = "Sửa hồ sơ bác sĩ";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var specialties = ViewBag.Specialties as List<QuanLyPhongKhamVaDatLich.Models.Specialty> ?? new List<QuanLyPhongKhamVaDatLich.Models.Specialty>();
+}
+
+<div class="container-fluid px-4 py-3">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+                <div class="mb-4">
+                    <h5 class="fw-bold text-dark mb-1"><i class="fa fa-edit text-warning me-2"></i>Cập nhật thông tin bác sĩ</h5>
+                    <p class="text-muted small">Chỉnh sửa thông tin hồ sơ nghiệp vụ phòng khám (Mã số: #@Model.DoctorId)</p>
+                </div>
+
+                <form asp-controller="Admin" asp-action="EditDoctor" method="post">
+                    <input type="hidden" asp-for="DoctorId" />
+                    <input type="hidden" asp-for="UserId" />
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Họ và tên bác sĩ <span class="text-danger">*</span></label>
+                            <input type="text" asp-for="FullName" class="form-control rounded-3" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Chuyên khoa <span class="text-danger">*</span></label>
+                            <select asp-for="SpecialtyId" class="form-select rounded-3" required>
+                                @foreach (var sp in specialties)
+                                {
+                                    <option value="@sp.SpecialtyId">@sp.SpecialtyName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Số điện thoại di động</label>
+                            <input type="text" asp-for="Phone" class="form-control rounded-3" />
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                        <a asp-controller="Admin" asp-action="Doctors" class="btn btn-light border px-4 rounded-pill">Quay lại</a>
+                        <button type="submit" class="btn btn-warning px-4 rounded-pill text-white">Cập nhật thay đổi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

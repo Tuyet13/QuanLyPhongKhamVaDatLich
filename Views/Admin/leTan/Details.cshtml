@@ -1,0 +1,49 @@
+﻿@model QuanLyPhongKhamVaDatLich.Models.Receptionist
+@{
+    ViewData["Title"] = "Chi tiết nhân viên lễ tân";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container px-4 py-3" style="max-width: 700px;">
+    <div class="card border-0 shadow-sm p-4" style="border-radius: 16px;">
+        <div class="d-flex align-items-center mb-4">
+            <div class="bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 50px; height: 50px; background-color: rgba(74, 0, 224, 0.1); color: #4a00e0;">
+                <i class="fa fa-id-card fs-4"></i>
+            </div>
+            <div>
+                <h5 class="fw-bold mb-0 text-dark">Hồ sơ chi tiết nhân sự</h5>
+                <small class="text-muted">Mã số nhân viên: #RECEP-@Model.ReceptionistId</small>
+            </div>
+        </div>
+
+        <table class="table table-borderless align-middle my-2">
+            <tbody>
+                <tr class="border-bottom">
+                    <td width="35%" class="py-3 text-muted small fw-semibold">Họ và tên nhân viên:</td>
+                    <td class="py-3 text-dark fw-bold">@Model.FullName</td>
+                </tr>
+                <tr class="border-bottom">
+                    <td class="py-3 text-muted small fw-semibold">Email tài khoản:</td>
+                    <td class="py-3 text-secondary">@(Model.User != null ? Model.User.Email : "Chưa cập nhật")</td>
+                </tr>
+                <tr class="border-bottom">
+                    <td class="py-3 text-muted small fw-semibold">Số điện thoại liên lạc:</td>
+                    <td class="py-3 text-secondary fw-medium">@Model.Phone</td>
+                </tr>
+                <tr class="border-bottom">
+                    <td class="py-3 text-muted small fw-semibold">Lương cơ bản:</td>
+                    <td class="py-3 text-success fw-bold">@Model.BaseSalary.ToString("N0") VNĐ</td>
+                </tr>
+                <tr class="border-bottom">
+                    <td class="py-3 text-muted small fw-semibold">Ngày ký hợp đồng vào làm:</td>
+                    <td class="py-3 text-secondary">@Model.HireDate.ToString("dd/MM/yyyy")</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="d-flex justify-content-end gap-2 mt-4">
+            <a asp-action="Receptionists" class="btn btn-light px-4 border" style="border-radius: 8px;">Quay lại danh sách</a>
+            <a asp-action="EditReceptionist" asp-route-id="@Model.ReceptionistId" class="btn btn-warning px-4 text-white" style="border-radius: 8px;"><i class="fa fa-edit me-2"></i>Chỉnh sửa</a>
+        </div>
+    </div>
+</div>

@@ -21,6 +21,12 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            // Nếu đã đăng nhập bằng Session rồi thì tự động điều hướng đi luôn
+            var currentRole = HttpContext.Session.GetString("UserRole");
+            if (!string.IsNullOrEmpty(currentRole))
+            {
+                return RedirectBasedOnRole(currentRole);
+            }
             return View();
         }
 
@@ -30,47 +36,65 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.Error = "Vui lòng nhập đầy đủ thông tin!";
+                ViewBag.Error = "Vui lòng nhập đầy đủ Email/Username và Mật khẩu!";
                 return View(model);
             }
 
-            // Trim để tránh lỗi khoảng trắng khi copy-paste
             string loginInput = model.Email?.Trim();
 
-            // KIỂM TRA: User phải khớp Username/Email VÀ Password VÀ Role đã chọn từ Dropdown
-            var user = _context.User.FirstOrDefault(u =>
-                (u.Email == loginInput || u.Username == loginInput)
-                && u.Password == model.Password
-                && u.Role == model.Role);
+            var user = _context.User.FirstOrDefault(u => u.Email == loginInput || u.Username == loginInput);
 
-            if (user != null)
+            if (user == null)
             {
-                try
-                {
-                    // LƯU SESSION
-                    HttpContext.Session.SetInt32("UserId", user.UserId);
-                    HttpContext.Session.SetString("UserRole", user.Role ?? "Patient");
-                    HttpContext.Session.SetString("UserName", user.Username ?? "User");
-
-                    // Chuyển hướng theo Role (Chính xác từng chữ cái)
-                    return user.Role switch
-                    {
-                        "Admin" => RedirectToAction("Index", "Admin"),
-                        "Doctor" => RedirectToAction("Index", "Doctor"),
-                        "Receptionist" => RedirectToAction("Index", "Receptionist"), // Trang cho Lễ tân
-                        "Patient" => RedirectToAction("Index", "Home"),
-                        _ => RedirectToAction("Index", "Home")
-                    };
-                }
-                catch (Exception)
-                {
-                    ViewBag.Error = "Lỗi Session: Hãy đảm bảo đã cấu hình builder.Services.AddSession() trong Program.cs";
-                    return View(model);
-                }
+                ViewBag.Error = "Tài khoản (Email hoặc Username) không tồn tại trên hệ thống!";
+                return View(model);
             }
 
-            ViewBag.Error = "Tài khoản, mật khẩu hoặc vai trò không chính xác!";
-            return View(model);
+            if (user.Password != model.Password)
+            {
+                ViewBag.Error = "Mật khẩu không chính xác. Vui lòng thử lại!";
+                return View(model);
+            }
+
+            if (user.Role != model.Role)
+            {
+                ViewBag.Error = $"Tài khoản này không thuộc nhóm quyền '{model.Role}'. Vui lòng kiểm tra lại!";
+                return View(model);
+            }
+
+            if (user.IsActive == false)
+            {
+                ViewBag.Error = "Tài khoản của bạn hiện đang bị khóa!";
+                return View(model);
+            }
+
+            try
+            {
+                HttpContext.Session.SetInt32("UserId", user.UserId);
+                HttpContext.Session.SetString("UserRole", user.Role ?? "Patient");
+                HttpContext.Session.SetString("UserName", user.Username ?? "User");
+
+                // SỬA TẠI ĐÂY: Chuyển hướng "Patient" sang đúng Patient Controller
+                return RedirectBasedOnRole(user.Role);
+            }
+            catch (Exception)
+            {
+                ViewBag.Error = "Lỗi hệ thống khi lưu Session. Hãy kiểm tra cấu hình Program.cs!";
+                return View(model);
+            }
+        }
+
+        // Hàm hỗ trợ điều hướng tập trung tránh lặp code
+        private IActionResult RedirectBasedOnRole(string role)
+        {
+            return role switch
+            {
+                "Admin" => RedirectToAction("Index", "Admin"),
+                "Doctor" => RedirectToAction("Index", "Doctor"),
+                "Receptionist" => RedirectToAction("Index", "Receptionist"),
+                "Patient" => RedirectToAction("Index", "Patient"), // Sửa từ "Home" thành "Patient"
+                _ => RedirectToAction("Index", "Home")
+            };
         }
 
         // ================= XỬ LÝ ĐĂNG KÝ (CHO BỆNH NHÂN) =================
@@ -84,14 +108,13 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
         {
             if (string.IsNullOrEmpty(Username) || string.IsNullOrEmpty(Password) || string.IsNullOrEmpty(Email))
             {
-                ViewBag.Error = "Vui lòng nhập đầy đủ các trường bắt buộc!";
+                ViewBag.Error = "Vui lòng nhập đầy đủ các trường bắt buộc (*)";
                 return View();
             }
 
-            // Kiểm tra trùng lặp
             if (_context.User.Any(u => u.Email == Email || u.Username == Username))
             {
-                ViewBag.Error = "Email hoặc tên đăng nhập đã tồn tại!";
+                ViewBag.Error = "Email hoặc tên đăng nhập này đã được sử dụng!";
                 return View();
             }
 
@@ -99,23 +122,21 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
             {
                 try
                 {
-                    // 1. Tạo tài khoản User
                     var newUser = new User
                     {
                         Username = Username.Trim(),
                         Password = Password,
-                        Role = "Patient", // Đăng ký mặc định là Bệnh nhân
+                        Role = "Patient",
                         Email = Email.Trim(),
                         IsActive = true
                     };
                     _context.User.Add(newUser);
                     _context.SaveChanges();
 
-                    // 2. Tạo thông tin Bệnh nhân (Patient) liên kết với User vừa tạo
                     var newPatient = new Patient
                     {
                         FullName = FullName ?? "Người dùng mới",
-                        Phone = Phone,
+                        Phone = Phone, // Chú ý trường này trong DB của bạn là Phone hay PhoneNumber nhé
                         Email = Email.Trim(),
                         UserId = newUser.UserId,
                         IsActive = true
@@ -124,6 +145,8 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
                     _context.SaveChanges();
 
                     transaction.Commit();
+
+                    TempData["Success"] = "Đăng ký tài khoản thành công!";
                     return RedirectToAction("Login");
                 }
                 catch (Exception ex)
@@ -139,7 +162,7 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
 
         public IActionResult Logout()
         {
-            HttpContext.Session.Clear(); // Xóa sạch Session
+            HttpContext.Session.Clear();
             return RedirectToAction("Login", "Account");
         }
     }
