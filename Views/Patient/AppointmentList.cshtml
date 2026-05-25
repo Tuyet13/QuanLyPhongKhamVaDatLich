@@ -1,0 +1,45 @@
+﻿@model List<QuanLyPhongKhamVaDatLich.Models.Appointment>
+
+@{
+    ViewData["Title"] = "Lịch hẹn sắp tới";
+}
+
+<h3 class="mb-3">Lịch hẹn sắp tới</h3>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info">Không có lịch hẹn nào đang chờ hoặc đã được xác nhận.</div>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <thead class="table-primary">
+            <tr>
+                <th>#</th>
+                <th>Bác sĩ</th>
+                <th>Chuyên khoa</th>
+                <th>Ngày - Giờ</th>
+                <th>Trạng thái</th>
+                <th>Giá</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ap in Model)
+            {
+                <tr>
+                    <td>@ap.AppointmentId</td>
+                    <td>@(ap.Doctor?.FullName ?? "N/A")</td>
+                    <td>@(ap.Doctor?.Specialty?.SpecialtyName ?? "N/A")</td>
+                    <td>@ap.AppointmentDate.ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@ap.Status</td>
+                    <td>@ap.Price.ToString("N0") đ</td>
+                    <td>
+                        <a asp-controller="Appointment" asp-action="Details" asp-route-id="@ap.AppointmentId" class="btn btn-sm btn-info">Chi tiết</a>
+                        <a asp-controller="Appointment" asp-action="Cancel" asp-route-id="@ap.AppointmentId" class="btn btn-sm btn-danger">Hủy</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

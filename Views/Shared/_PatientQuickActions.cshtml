@@ -1,0 +1,23 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
+    // Lấy userId từ Session (nếu lúc đăng nhập bạn có lưu vào Session)
+    var userId = HttpContextAccessor.HttpContext?.Session.GetString("UserId");
+}
+
+<div class="d-flex gap-2">
+    @if (userId != null)
+    {
+        <a asp-controller="Appointment" asp-action="Create" class="btn btn-primary">Đặt lịch ngay</a>
+        <a asp-controller="Patient" asp-action="AppointmentList" class="btn btn-outline-primary">Xem lịch hẹn</a>
+        <a asp-controller="Patient" asp-action="MedicalHistory" class="btn btn-outline-secondary">Xem lịch sử bệnh án</a>
+    }
+    else
+    {
+        <a asp-controller="Account" asp-action="Login" class="btn btn-primary">Đăng nhập để đặt lịch</a>
+    }
+
+    <a href="tel:19001234" class="btn btn-success">Gọi ngay</a>
+</div>

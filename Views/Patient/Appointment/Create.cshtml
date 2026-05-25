@@ -1,0 +1,53 @@
+﻿@model QuanLyPhongKhamVaDatLich.Models.Appointment
+
+@{
+    ViewData["Title"] = "Đặt lịch khám";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white text-center">
+                    <h3><i class="fas fa-calendar-alt"></i> ĐẶT LỊCH KHÁM BỆNH</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Create" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <input type="hidden" asp-for="PatientId" />
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Chọn Bác sĩ khám</label>
+                            <select asp-for="DoctorId" class="form-select" asp-items="@(new SelectList(ViewBag.Doctors, "DoctorId", "FullName"))" required>
+                                <option value="">-- Chọn Bác sĩ --</option>
+                            </select>
+                            <span asp-validation-for="DoctorId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Ngày & Giờ khám</label>
+                            <input asp-for="AppointmentDate" type="datetime-local" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" required />
+                            <span asp-validation-for="AppointmentDate" class="text-danger"></span>
+                        </div>
+
+                        <input type="hidden" asp-for="Status" value="Chờ khám" />
+
+                        <input type="hidden" asp-for="Price" value="0" />
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-success btn-lg">Xác nhận đặt lịch</button>
+                            <a asp-controller="Patient" asp-action="Index" class="btn btn-outline-secondary">Quay lại trang chủ</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

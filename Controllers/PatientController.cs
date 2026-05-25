@@ -88,5 +88,61 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        [HttpGet]
+        public IActionResult MedicalHistory()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserId");
+            string userRole = HttpContext.Session.GetString("UserRole");
+            if (userId == null || userRole != "Patient")
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var patient = _context.Patient.FirstOrDefault(p => p.UserId == userId.Value);
+            if (patient == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            // Load medical records with appointment -> doctor
+            var records = _context.MedicalRecord
+                .Include(m => m.Appointment)
+                    .ThenInclude(a => a.Doctor)
+                .Where(m => m.Appointment != null && m.Appointment.PatientId == patient.PatientId)
+                .OrderByDescending(m => m.RecordDate)
+                .ToList();
+
+            var result = new List<MedicalHistoryViewModel>();
+
+            foreach (var r in records)
+            {
+                var vm = new MedicalHistoryViewModel
+                {
+                    RecordId = r.RecordId,
+                    RecordDate = r.RecordDate,
+                    Diagnosis = r.Diagnosis,
+                    Note = r.Note,
+                    DoctorName = r.Appointment?.Doctor?.FullName ?? "N/A"
+                };
+
+                // Load prescriptions for this medical record
+                var pres = _context.PrescriptionDetail
+                    .Include(pd => pd.Medicine)
+                    .Where(pd => pd.MedicalRecordId == r.RecordId)
+                    .Select(pd => new PrescriptionItem
+                    {
+                        MedicineName = pd.Medicine != null ? pd.Medicine.MedicineName : "N/A",
+                        Quantity = pd.Quantity,
+                        Dosage = pd.Dosage
+                    })
+                    .ToList();
+
+                vm.Prescriptions = pres;
+                result.Add(vm);
+            }
+
+            return View(result); // Views/Patient/MedicalHistory.cshtml
+        }
     }
 }
