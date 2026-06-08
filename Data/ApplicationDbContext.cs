@@ -24,7 +24,10 @@ namespace QuanLyPhongKhamVaDatLich.Data
         public DbSet<MedicalRecord> MedicalRecord { get; set; }
         public DbSet<Medicine> Medicine { get; set; }
         public DbSet<PrescriptionDetail> PrescriptionDetail { get; set; }
+<<<<<<< HEAD
         public DbSet<Prescription> Prescription { get; set; }
+=======
+>>>>>>> 0c8a645e71df325eae5dda7c8fb73e0b24a272a1
 
         // --- CÁC BẢNG QUẢN LÝ TÀI CHÍNH ---
         public DbSet<Invoice> Invoice { get; set; }

@@ -15,12 +15,15 @@
                 </div>
 
                 <form asp-controller="Admin" asp-action="CreateDoctor" method="post">
+<<<<<<< HEAD
                     @if (TempData["Error"] != null)
                     {
                         <div class="alert alert-danger">
                             @TempData["Error"]
                         </div>
                     }
+=======
+>>>>>>> 0c8a645e71df325eae5dda7c8fb73e0b24a272a1
                     <div asp-validation-summary="ModelOnly" class="text-danger mb-3 small"></div>
 
                     <div class="row g-3 mb-4">

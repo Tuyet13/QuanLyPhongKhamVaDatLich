@@ -90,9 +90,15 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
             return role switch
             {
                 "Admin" => RedirectToAction("Index", "Admin"),
+<<<<<<< HEAD
                 "Doctor" => RedirectToAction("Dashboard", "Doctor"),
                 "Receptionist" => RedirectToAction("Index", "Receptionist"),
                 "Patient" => RedirectToAction("Index", "Patient"),
+=======
+                "Doctor" => RedirectToAction("Index", "Doctor"),
+                "Receptionist" => RedirectToAction("Index", "Receptionist"),
+                "Patient" => RedirectToAction("Index", "Patient"), // Sửa từ "Home" thành "Patient"
+>>>>>>> 0c8a645e71df325eae5dda7c8fb73e0b24a272a1
                 _ => RedirectToAction("Index", "Home")
             };
         }

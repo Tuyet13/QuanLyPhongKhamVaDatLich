@@ -123,7 +123,11 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
             {
+<<<<<<< HEAD
                 var user = new User { Username = Email, Email = Email, Password = Password, Role = "Doctor", IsActive = true };
+=======
+                var user = new User { Email = Email, Password = Password, Role = "Doctor", IsActive = true };
+>>>>>>> 0c8a645e71df325eae5dda7c8fb73e0b24a272a1
                 _context.User.Add(user);
                 await _context.SaveChangesAsync();
 
@@ -134,6 +138,7 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
                 await transaction.CommitAsync();
                 return RedirectToAction("Doctors");
             }
+<<<<<<< HEAD
             catch (Exception ex)
             {
                 await transaction.RollbackAsync();
@@ -144,6 +149,9 @@ namespace QuanLyPhongKhamVaDatLich.Controllers
 
                 return View("~/Views/Admin/doctor/Create.cshtml", doctor);
             }
+=======
+            catch { await transaction.RollbackAsync(); return View(doctor); }
+>>>>>>> 0c8a645e71df325eae5dda7c8fb73e0b24a272a1
         }
 
         // 4. QUẢN LÝ LỄ TÂN
