@@ -217,13 +217,6 @@
                     Lịch khám
                 </a>
 
-                <a class="doctor-nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString()=="Appointment"
-                  && ViewContext.RouteData.Values["Action"]?.ToString()=="Create" ? "active" : "")"
-                   href="@Url.Action("Create", "Appointment")">
-                    <i class="fa fa-calendar-plus me-2"></i>
-                    Đặt lịch khám
-                </a>
-
                 <a class="doctor-nav-link @(ViewContext.RouteData.Values["Action"]?.ToString()=="AppointmentsToday" ? "active" : "")"
                    href="@Url.Action("AppointmentsToday", "Doctor")">
                     <i class="fa fa-calendar-day me-2"></i>

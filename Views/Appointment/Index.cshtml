@@ -1,85 +1,68 @@
 ﻿@model List<QuanLyPhongKhamVaDatLich.Models.Appointment>
 
-@{
-    ViewData["Title"] = "Danh sách lịch hẹn";
-    Layout = "~/Views/Shared/_DoctorLayout.cshtml";
-}
+    <h3 class="mb-4">
+        Danh sách lịch hẹn
+    </h3>
 
-<h2>
-    <i class="fa fa-calendar-check"></i>
-    Danh sách lịch hẹn
-</h2>
+    <table class="table table-bordered">
 
-<a asp-action="Create"
-   class="btn btn-success mb-3">
-    <i class="fa fa-plus"></i>
-    Đặt lịch mới
-</a>
+        <thead class="table-primary">
 
-<div class="card shadow">
+            <tr>
+                <th>Bệnh nhân</th>
+                <th>Bác sĩ</th>
+                <th>Ngày khám</th>
+                <th>Trạng thái</th>
+            </tr>
 
-    <div class="card-body">
+        </thead>
 
-        <table class="table table-bordered table-hover">
+        <tbody>
 
-            <thead class="table-primary">
-                <tr>
-                    <th>Bệnh nhân</th>
-                    <th>Bác sĩ</th>
-                    <th>Ngày khám</th>
-                    <th>Trạng thái</th>
-                </tr>
-            </thead>
+            @foreach (var item in Model)
+        {
+            <tr>
 
-            <tbody>
+                <td>
+                    @item.Patient?.FullName
+                </td>
 
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.Patient?.FullName</td>
+                <td>
+                    @item.Doctor?.FullName
+                </td>
 
-                        <td>@item.Doctor?.FullName</td>
+                <td>
+                    @item.AppointmentDate
+                </td>
 
-                        <td>
-                            @item.AppointmentDate.ToString("dd/MM/yyyy HH:mm")
-                        </td>
+                <td>
 
-                        <td>
+                    @if (item.Status == "Pending")
+                    {
+                    <span class="badge bg-warning">
+                        Chờ khám
+                    </span>
+                    }
 
-                            @if (item.Status == "Pending")
-                            {
-                                <span class="badge bg-warning text-dark">
-                                    Chờ khám
-                                </span>
-                            }
-                            else if (item.Status == "Completed")
-                            {
-                                <span class="badge bg-success">
-                                    Hoàn thành
-                                </span>
-                            }
-                            else if (item.Status == "Cancelled")
-                            {
-                                <span class="badge bg-danger">
-                                    Đã hủy
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-secondary">
-                                    @item.Status
-                                </span>
-                            }
+                    @if (item.Status == "Completed")
+                    {
+                    <span class="badge bg-success">
+                        Hoàn thành
+                    </span>
+                    }
 
-                        </td>
+                    @if (item.Status == "Cancelled")
+                    {
+                    <span class="badge bg-danger">
+                        Đã hủy
+                    </span>
+                    }
 
-                    </tr>
-                }
+                </td>
 
-            </tbody>
+            </tr>
+        }
 
-        </table>
+        </tbody>
 
-    </div>
-
-</div>
+    </table>
